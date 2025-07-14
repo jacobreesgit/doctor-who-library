@@ -1,6 +1,7 @@
 """Library data endpoints."""
 
 from typing import List, Optional
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -12,7 +13,7 @@ router = APIRouter()
 
 class LibraryItemResponse(BaseModel):
     """Response model for library item."""
-    id: str
+    id: UUID
     title: str
     display_title: str
     content_type: Optional[str]
@@ -22,6 +23,9 @@ class LibraryItemResponse(BaseModel):
     director: Optional[str]
     enrichment_status: str
     enrichment_confidence: float
+    wiki_url: Optional[str]
+    wiki_summary: Optional[str]
+    wiki_image_url: Optional[str]
     
     class Config:
         from_attributes = True
@@ -41,6 +45,7 @@ async def get_library_items(
     section: Optional[str] = Query(None, description="Filter by section"),
     content_type: Optional[str] = Query(None, description="Filter by content type"),
     doctor: Optional[str] = Query(None, description="Filter by doctor"),
+    enrichment_status: Optional[str] = Query(None, description="Filter by enrichment status"),
     limit: int = Query(50, le=1000, description="Maximum items to return"),
     offset: int = Query(0, description="Number of items to skip"),
     db: Session = Depends(get_db),
@@ -54,6 +59,8 @@ async def get_library_items(
         query = query.filter(LibraryItem.content_type == content_type)
     if doctor:
         query = query.filter(LibraryItem.doctor == doctor)
+    if enrichment_status:
+        query = query.filter(LibraryItem.enrichment_status == enrichment_status)
     
     items = query.offset(offset).limit(limit).all()
     

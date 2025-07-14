@@ -42,10 +42,19 @@ class ExcelConverter:
         for sheet_name, df in excel_data.items():
             if df.empty:
                 continue
+            
+            # Skip running tally sheet
+            if sheet_name.lower() == "running tally":
+                continue
                 
             # Create or get section
             section = self._get_or_create_section(db, sheet_name)
             total_sections += 1
+            
+            # Set proper column headers from first row
+            if not df.empty and 'Serial Title' not in df.columns:
+                df.columns = df.iloc[0]
+                df = df.drop(df.index[0])
             
             # Process groups and items
             current_group = None
