@@ -21,6 +21,7 @@ import StoriesPage from './pages/StoriesPage';
 import ExplorePage from './pages/ExplorePage';
 import RecentPage from './pages/RecentPage';
 import HomePage from './pages/HomePage';
+import CollectionsPage from './pages/CollectionsPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/explore/*" element={<ExplorePage />} />
                 <Route path="/recent/*" element={<RecentPage />} />
                 <Route path="/dev" element={<HomePage />} />
+                <Route path="/collections" element={<CollectionsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>

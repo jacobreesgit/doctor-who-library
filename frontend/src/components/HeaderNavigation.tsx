@@ -1,6 +1,6 @@
 /**
  * Combined Header and Navigation Component
- * 
+ *
  * Unified header and navigation bar for Doctor Who Library
  * Features:
  * - Doctor Who Library branding with icon
@@ -14,65 +14,76 @@
  * - Outside click handling for dropdown menus
  */
 
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  BookOpenIcon, 
-  SparklesIcon, 
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  BookOpenIcon,
+  SparklesIcon,
   ClockIcon,
   ChevronDownIcon,
-  MagnifyingGlassIcon
-} from '@heroicons/react/24/outline';
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 
 interface HeaderNavigationProps {
   className?: string;
 }
 
-const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) => {
+const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
+  className = "",
+}) => {
   const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const mainTabs = [
     {
-      id: 'stories',
-      label: 'Stories',
+      id: "doctors",
+      label: "Doctors",
       icon: BookOpenIcon,
-      href: '/stories',
-      description: 'Browse by Doctor, format, or chronology',
+      href: "/doctors",
+      description: "Browse by Doctor era and incarnation",
       subItems: [
-        { label: 'By Doctor', href: '/stories/doctors' },
-        { label: 'By Format', href: '/stories/formats' },
-        { label: 'All Stories', href: '/stories/all' },
-      ]
+        { label: "Classic Era (1st-8th)", href: "/doctors/classic" },
+        { label: "Modern Era (9th-15th)", href: "/doctors/modern" },
+        { label: "War & Fugitive Doctors", href: "/doctors/special" },
+        { label: "Unbound Doctors", href: "/doctors/unbound" },
+      ],
     },
     {
-      id: 'explore',
-      label: 'Explore',
+      id: "spinoffs",
+      label: "Spin-offs",
       icon: SparklesIcon,
-      href: '/explore',
-      description: 'Curated collections and discoveries',
+      href: "/spinoffs",
+      description: "Expanded universe shows and characters",
       subItems: [
-        { label: 'Featured', href: '/explore/featured' },
-        { label: 'Collections', href: '/explore/collections' },
-        { label: 'New Additions', href: '/explore/new' },
-      ]
+        { label: "Torchwood", href: "/spinoffs/torchwood" },
+        { label: "Sarah Jane Smith", href: "/spinoffs/sarah-jane" },
+        { label: "Class", href: "/spinoffs/class" },
+        { label: "Audio Adventures", href: "/spinoffs/audio" },
+        { label: "UNIT", href: "/spinoffs/unit" },
+      ],
     },
     {
-      id: 'recent',
-      label: 'Recent',
+      id: "collections",
+      label: "Collections",
       icon: ClockIcon,
-      href: '/recent',
-      description: 'Your activity and favorites',
+      href: "/collections",
+      description: "Special collections and themed content",
       subItems: [
-        { label: 'Continue Watching', href: '/recent/continue' },
-        { label: 'Recently Added', href: '/recent/added' },
-        { label: 'Your Favorites', href: '/recent/favorites' },
-      ]
-    }
+        {
+          label: "Time Lord Victorious",
+          href: "/collections/time-lord-victorious",
+        },
+        { label: "Tales from New Earth", href: "/collections/tales-new-earth" },
+        { label: "Documentaries", href: "/collections/documentaries" },
+        { label: "Villains", href: "/collections/villains" },
+      ],
+    },
   ];
 
   const isActive = (href: string) => {
-    return location.pathname === href || location.pathname.startsWith(href + '/');
+    return (
+      location.pathname === href || location.pathname.startsWith(href + "/")
+    );
   };
 
   const handleDropdownToggle = (tabId: string) => {
@@ -91,21 +102,21 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) =
                 <h1 className="text-lg font-bold">Doctor Who Library</h1>
               </div>
             </Link>
-            
+
             {/* Navigation Tabs */}
             <nav className="flex items-center space-x-6">
               {mainTabs.map((tab) => {
                 const Icon = tab.icon;
                 const active = isActive(tab.href);
-                
+
                 return (
                   <div key={tab.id} className="relative">
                     <button
                       onClick={() => handleDropdownToggle(tab.id)}
                       className={`flex items-center space-x-2 py-2 px-3 text-sm font-medium transition-colors rounded-md ${
                         active
-                          ? 'bg-blue-500 text-white'
-                          : 'text-blue-200 hover:text-white hover:bg-blue-500'
+                          ? "bg-blue-500 text-white"
+                          : "text-blue-200 hover:text-white hover:bg-blue-500"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -151,6 +162,12 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) =
                 className="pl-9 pr-4 py-1.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48 text-gray-900 text-sm"
               />
             </div>
+            <Link
+              to="/collections"
+              className="text-blue-200 hover:text-white text-sm font-medium transition-colors"
+            >
+              Browse All
+            </Link>
             <Link
               to="/my-library"
               className="text-blue-200 hover:text-white text-sm font-medium transition-colors"

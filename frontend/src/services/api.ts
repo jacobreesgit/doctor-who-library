@@ -142,6 +142,10 @@ export const queryKeys = {
     recent: () => ['library', 'recent'],
     byDoctor: (doctor: string) => ['library', 'byDoctor', doctor],
     spinoffs: () => ['library', 'spinoffs'],
+    modernDoctors: () => ['library', 'modernDoctors'],
+    classicDoctors: () => ['library', 'classicDoctors'],
+    specialCollections: () => ['library', 'specialCollections'],
+    villains: () => ['library', 'villains'],
   },
   health: {
     check: () => ['health', 'check'],

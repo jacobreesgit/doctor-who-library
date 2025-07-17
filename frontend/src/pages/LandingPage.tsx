@@ -33,23 +33,24 @@ const LandingPage: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch recent enrichments
-  const { data: recentItems, isLoading: recentLoading } = useQuery({
-    queryKey: queryKeys.library.recent(),
+  // Fetch modern era Doctors collection
+  const { data: modernDoctors, isLoading: modernLoading } = useQuery({
+    queryKey: queryKeys.library.modernDoctors(),
     queryFn: () => libraryApi.getLibraryItems({ 
+      sections: ['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'],
       enrichment_status: 'enriched',
       limit: 20,
-      sortBy: 'updated_at',
+      sortBy: 'enrichment_confidence',
       sortOrder: 'desc'
     }),
-    staleTime: 30 * 1000, // 30 seconds for recent items
+    staleTime: 10 * 60 * 1000,
   });
 
-  // Fetch items by Doctor for spotlight
-  const { data: doctorItems, isLoading: doctorLoading } = useQuery({
-    queryKey: queryKeys.library.byDoctor('4th Doctor'),
+  // Fetch classic era Doctors collection
+  const { data: classicDoctors, isLoading: classicLoading } = useQuery({
+    queryKey: queryKeys.library.classicDoctors(),
     queryFn: () => libraryApi.getLibraryItems({ 
-      section: '4th Doctor',
+      sections: ['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'],
       enrichment_status: 'enriched',
       limit: 20,
       sortBy: 'enrichment_confidence',
@@ -62,7 +63,33 @@ const LandingPage: React.FC = () => {
   const { data: spinoffItems, isLoading: spinoffLoading } = useQuery({
     queryKey: queryKeys.library.spinoffs(),
     queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Bernice Summerfield'],
+      sections: ['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'],
+      enrichment_status: 'enriched',
+      limit: 20,
+      sortBy: 'enrichment_confidence',
+      sortOrder: 'desc'
+    }),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // Fetch special collections
+  const { data: specialCollections, isLoading: specialLoading } = useQuery({
+    queryKey: queryKeys.library.specialCollections(),
+    queryFn: () => libraryApi.getLibraryItems({ 
+      sections: ['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries', 'War Doctor'],
+      enrichment_status: 'enriched',
+      limit: 20,
+      sortBy: 'enrichment_confidence',
+      sortOrder: 'desc'
+    }),
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // Fetch villain collections
+  const { data: villainItems, isLoading: villainLoading } = useQuery({
+    queryKey: queryKeys.library.villains(),
+    queryFn: () => libraryApi.getLibraryItems({ 
+      sections: ['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'],
       enrichment_status: 'enriched',
       limit: 20,
       sortBy: 'enrichment_confidence',
@@ -94,54 +121,49 @@ const LandingPage: React.FC = () => {
 
       {/* Content Rails */}
       <div className="space-y-12">
-        {/* Recently Enriched */}
+        {/* Modern Era Doctors */}
         <ContentRail
-          title="🔥 Recently Enriched"
-          subtitle="Newly added TARDIS Wiki content"
-          items={recentItems || []}
-          isLoading={recentLoading}
-          viewAllLink="/explore/new"
+          title="🌟 Modern Era Doctors"
+          subtitle="From the 9th Doctor to the 15th Doctor"
+          items={modernDoctors || []}
+          isLoading={modernLoading}
+          viewAllLink="/doctors/modern"
         />
 
-        {/* Doctor Spotlight */}
+        {/* Classic Era Doctors */}
         <ContentRail
-          title="👑 Doctor Spotlight: 4th Doctor"
-          subtitle="The longest-serving Doctor's greatest adventures"
-          items={doctorItems || []}
-          isLoading={doctorLoading}
-          viewAllLink="/stories/doctors/4th-doctor"
+          title="🎭 Classic Era Doctors"
+          subtitle="The original eight Doctors' greatest adventures"
+          items={classicDoctors || []}
+          isLoading={classicLoading}
+          viewAllLink="/doctors/classic"
         />
 
         {/* Spin-off Adventures */}
         <ContentRail
           title="🚀 Spin-off Adventures"
-          subtitle="Expanded universe stories and characters"
+          subtitle="Expanded universe shows and characters"
           items={spinoffItems || []}
           isLoading={spinoffLoading}
-          viewAllLink="/universe/shows"
+          viewAllLink="/spinoffs"
         />
 
-        {/* Featured Collections */}
+        {/* Special Collections */}
         <ContentRail
-          title="📚 Featured Collections"
-          subtitle="Curated story collections and themes"
-          items={enrichedItemsForRails.slice(0, 20)}
-          isLoading={false}
-          viewAllLink="/explore/collections"
+          title="📚 Special Collections"
+          subtitle="Time Lord Victorious, New Earth, and more"
+          items={specialCollections || []}
+          isLoading={specialLoading}
+          viewAllLink="/collections"
         />
 
-        {/* Classic Serials */}
+        {/* Villain Collections */}
         <ContentRail
-          title="🎭 Classic Serials"
-          subtitle="Multi-part stories from the classic era"
-          items={enrichedItemsForRails.filter((item: any) => 
-            item.section_name?.includes('1st Doctor') || 
-            item.section_name?.includes('2nd Doctor') ||
-            item.section_name?.includes('3rd Doctor') ||
-            item.section_name?.includes('4th Doctor')
-          ).slice(0, 20)}
-          isLoading={false}
-          viewAllLink="/stories/formats/tv"
+          title="👹 Villains & Monsters"
+          subtitle="Daleks, Cybermen, Masters, and more"
+          items={villainItems || []}
+          isLoading={villainLoading}
+          viewAllLink="/collections/villains"
         />
       </div>
 
@@ -155,16 +177,22 @@ const LandingPage: React.FC = () => {
         </p>
         <div className="flex justify-center space-x-4">
           <Link
-            to="/stories/doctors"
+            to="/doctors"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Browse by Doctor
           </Link>
           <Link
-            to="/explore/featured"
+            to="/spinoffs"
             className="bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
           >
-            Explore Collections
+            Explore Spin-offs
+          </Link>
+          <Link
+            to="/collections"
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+          >
+            Special Collections
           </Link>
         </div>
       </div>
