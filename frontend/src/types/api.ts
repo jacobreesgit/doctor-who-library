@@ -16,6 +16,7 @@ export interface LibraryItemResponse {
   wiki_url?: string;
   wiki_summary?: string;
   wiki_image_url?: string;
+  wiki_search_term?: string;
 }
 
 export interface LibraryStatsResponse {

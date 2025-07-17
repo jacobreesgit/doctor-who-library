@@ -31,8 +31,8 @@ const LibraryGrid: React.FC<LibraryGridProps> = ({
 
   // Build query parameters
   const queryParams = {
-    limit: itemsPerPage,
-    offset,
+    page: currentPage,
+    size: itemsPerPage,
     ...(enrichmentFilter && { enrichment_status: enrichmentFilter })
   };
 
@@ -240,6 +240,12 @@ const LibraryGrid: React.FC<LibraryGridProps> = ({
                         <span className="font-medium">Confidence:</span>
                         <span className="ml-2">{Math.round(selectedItem.enrichment_confidence * 100)}%</span>
                       </div>
+                      {selectedItem.wiki_search_term && (
+                        <div>
+                          <span className="font-medium">Search Term:</span>
+                          <span className="ml-2 text-gray-600">{selectedItem.wiki_search_term}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -73,8 +73,8 @@ export const libraryApi = {
    * Get library items with optional filtering and pagination
    */
   async getLibraryItems(params: LibraryItemsQuery = {}): Promise<LibraryItemResponse[]> {
-    const response = await api.get<LibraryItemResponse[]>('/library/items', { params });
-    return response.data;
+    const response = await api.get<{items: LibraryItemResponse[], total: number, page: number, size: number, pages: number}>('/library/items', { params });
+    return response.data.items;
   },
 
   /**

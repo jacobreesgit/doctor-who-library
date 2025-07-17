@@ -7,6 +7,7 @@ import type { LibraryItemResponse } from '../types/api';
 import WikiSummary from './WikiSummary';
 import EnrichmentBadge from './EnrichmentBadge';
 import WikiImage from './WikiImage';
+import EnrichmentManager from './EnrichmentManager';
 
 interface LibraryCardProps {
   item: LibraryItemResponse;
@@ -72,19 +73,30 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ item, onClick }) => {
                 showConfidence={isEnriched}
               />
               
-              {/* Wiki Link */}
-              {item.wiki_url && (
-                <button
-                  onClick={handleWikiClick}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
-                  title="View on TARDIS Wiki"
-                >
-                  <span>Wiki</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </button>
-              )}
+              <div className="flex items-center space-x-2">
+                {/* Reset Enrichment */}
+                {isEnriched && (
+                  <EnrichmentManager
+                    itemId={item.id}
+                    itemTitle={item.display_title}
+                    variant="individual"
+                  />
+                )}
+                
+                {/* Wiki Link */}
+                {item.wiki_url && (
+                  <button
+                    onClick={handleWikiClick}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
+                    title="View on TARDIS Wiki"
+                  >
+                    <span>Wiki</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

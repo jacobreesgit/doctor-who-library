@@ -9,14 +9,16 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "kill-servers": "pkill -f 'dw-serve' || true && pkill -f 'vite' || true && pkill -f 'uvicorn' || true",
-    "backend": "cd .. && poetry run dw-serve",
+    "backend": "cd .. && poetry run dw-cli serve",
     "start": "npm run kill-servers && concurrently \"npm run backend\" \"npm run dev\"",
-    "start:dev": "npm run kill-servers && concurrently --names \"API,WEB\" --prefix-colors \"blue,green\" \"npm run backend\" \"npm run dev\"",
+    "start:dev": "npm run kill-servers && concurrently --names \"API,WEB,MONITOR\" --prefix-colors \"blue,green,magenta\" \"npm run backend\" \"npm run dev\" \"node enrichment-monitor-optimized.mjs\"",
+    "start:dev:optimized": "npm run kill-servers && concurrently --names \"API,WEB,MONITOR\" --prefix-colors \"blue,green,magenta\" \"npm run backend\" \"npm run dev\" \"node enrichment-monitor-optimized.mjs\"",
     "stop": "npm run kill-servers"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",
     "axios": "^1.10.0",
+    "eventsource": "^2.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3"
