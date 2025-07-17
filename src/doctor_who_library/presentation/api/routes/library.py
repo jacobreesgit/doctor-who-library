@@ -207,11 +207,15 @@ async def get_library_sections(
 ) -> List[str]:
     """Get all unique library sections."""
     try:
-        # This is a simplified implementation
-        # In production, we'd need a proper sections repository
-        items = await service.get_all_items()
-        sections = list(set(item.section_name for item in items if item.section_name))
-        return sorted(sections)
+        # Use a direct database query to get distinct sections efficiently
+        from doctor_who_library.shared.database.connection import execute_query
+        
+        rows = execute_query(
+            "SELECT DISTINCT section_name FROM library_items WHERE section_name IS NOT NULL ORDER BY section_name"
+        )
+        
+        sections = [row[0] for row in rows]
+        return sections
     except ServiceException as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
@@ -225,11 +229,15 @@ async def get_library_groups(
 ) -> List[str]:
     """Get all unique library groups."""
     try:
-        # This is a simplified implementation
-        # In production, we'd need a proper groups repository
-        items = await service.get_all_items()
-        groups = list(set(item.group_name for item in items if item.group_name))
-        return sorted(groups)
+        # Use a direct database query to get distinct groups efficiently
+        from doctor_who_library.shared.database.connection import execute_query
+        
+        rows = execute_query(
+            "SELECT DISTINCT group_name FROM library_items WHERE group_name IS NOT NULL ORDER BY group_name"
+        )
+        
+        groups = [row[0] for row in rows]
+        return groups
     except ServiceException as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:

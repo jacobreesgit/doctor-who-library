@@ -80,29 +80,66 @@ const CollectionsPage: React.FC = () => {
   const sectionCategories = useMemo(() => {
     if (!sections) return {};
     
-    const categories: Record<string, string[]> = {
-      'Classic Era Doctors': sections.filter(s => 
-        ['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'].includes(s)
-      ),
-      'Modern Era Doctors': sections.filter(s => 
-        ['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'].includes(s)
-      ),
-      'Spin-offs & Companions': sections.filter(s => 
-        ['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'].includes(s)
-      ),
-      'Villains & Monsters': sections.filter(s => 
-        ['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'].includes(s)
-      ),
-      'Special Collections': sections.filter(s => 
-        ['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries', 'War Doctor'].includes(s)
-      )
-    };
+    const categories: Record<string, string[]> = {};
     
-    // Add any remaining sections to "Other"
+    // Classic Era Doctors
+    const classicDoctors = sections.filter(s => 
+      ['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'].includes(s)
+    );
+    if (classicDoctors.length > 0) {
+      categories['Classic Era Doctors'] = classicDoctors;
+    }
+    
+    // Modern Era Doctors
+    const modernDoctors = sections.filter(s => 
+      ['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'].includes(s)
+    );
+    if (modernDoctors.length > 0) {
+      categories['Modern Era Doctors'] = modernDoctors;
+    }
+    
+    // Special Doctors
+    const specialDoctors = sections.filter(s => 
+      ['War Doctor', 'Fugitive Doctor', 'Curator', 'Unbound Doctor'].includes(s)
+    );
+    if (specialDoctors.length > 0) {
+      categories['Special Doctors'] = specialDoctors;
+    }
+    
+    // Spin-offs & Companions
+    const spinoffs = sections.filter(s => 
+      ['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'].includes(s)
+    );
+    if (spinoffs.length > 0) {
+      categories['Spin-offs & Companions'] = spinoffs;
+    }
+    
+    // Villains & Monsters
+    const villains = sections.filter(s => 
+      ['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'].includes(s)
+    );
+    if (villains.length > 0) {
+      categories['Villains & Monsters'] = villains;
+    }
+    
+    // Special Collections
+    const specialCollections = sections.filter(s => 
+      ['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries'].includes(s)
+    );
+    if (specialCollections.length > 0) {
+      categories['Special Collections'] = specialCollections;
+    }
+    
+    // Add any remaining sections to "Other Collections"
     const allCategorized = Object.values(categories).flat();
     const remaining = sections.filter(s => !allCategorized.includes(s));
     if (remaining.length > 0) {
       categories['Other Collections'] = remaining;
+    }
+    
+    // If no categories were created, just show all sections under "All Collections"
+    if (Object.keys(categories).length === 0) {
+      categories['All Collections'] = sections;
     }
     
     return categories;
@@ -124,12 +161,15 @@ const CollectionsPage: React.FC = () => {
     if (section.includes('13th')) return '👥';
     if (section.includes('14th')) return '🔄';
     if (section.includes('15th')) return '✨';
+    if (section.includes('War Doctor')) return '⚔️';
+    if (section.includes('Fugitive Doctor')) return '🏃‍♀️';
+    if (section.includes('Curator')) return '🖼️';
+    if (section.includes('Unbound')) return '🔗';
     if (section.includes('Torchwood')) return '🚀';
     if (section.includes('Sarah Jane')) return '👩‍🔬';
     if (section.includes('Dalek')) return '🔵';
     if (section.includes('Cybermen')) return '🤖';
     if (section.includes('Master')) return '👹';
-    if (section.includes('War Doctor')) return '⚔️';
     if (section.includes('Documentaries')) return '📺';
     return '📚';
   };
