@@ -1,5 +1,14 @@
 /**
- * TypeScript interfaces for Doctor Who Library API responses
+ * TypeScript Type Definitions for Doctor Who Library API
+ * 
+ * Comprehensive type definitions for API responses and requests
+ * Features:
+ * - Complete LibraryItem interface with all fields
+ * - Enrichment status types and confidence scoring
+ * - API query parameter interfaces
+ * - Error response types
+ * - Type aliases for easier usage
+ * - Comprehensive search and filtering types
  */
 
 export interface LibraryItemResponse {

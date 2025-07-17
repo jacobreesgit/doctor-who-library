@@ -1,5 +1,13 @@
 /**
- * Loading spinner component
+ * Loading Spinner Component
+ * 
+ * Reusable loading spinner with multiple sizes and animations
+ * Features:
+ * - Multiple size variants (small, medium, large)
+ * - Smooth CSS animations
+ * - Accessible with proper ARIA labels
+ * - Customizable colors and styling
+ * - TypeScript support with props interface
  */
 
 import React from 'react';

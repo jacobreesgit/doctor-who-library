@@ -1,5 +1,15 @@
 /**
- * Error boundary component for handling React errors
+ * Error Boundary Component for Doctor Who Library
+ * 
+ * React error boundary for graceful error handling and recovery
+ * Features:
+ * - Catches JavaScript errors in component tree
+ * - Displays user-friendly error messages
+ * - Provides error details in development mode
+ * - Reload functionality for recovery
+ * - Consistent styling with application theme
+ * - Accessibility support with proper ARIA labels
+ * - Console logging for debugging
  */
 
 import React from 'react';

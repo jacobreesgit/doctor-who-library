@@ -1,5 +1,15 @@
 /**
- * Netflix-style landing page showcasing enriched content
+ * Landing Page Component
+ * 
+ * Netflix-style homepage with featured content and content rails
+ * Features:
+ * - Hero section with featured enriched content
+ * - Content rails for different categories
+ * - Enriched content prioritization
+ * - Responsive design with mobile optimization
+ * - Performance optimized with React Query
+ * - SEO friendly structure
+ * - Real-time content updates
  */
 
 import React from 'react';

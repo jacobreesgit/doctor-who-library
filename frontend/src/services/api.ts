@@ -1,5 +1,14 @@
 /**
- * API service layer for Doctor Who Library
+ * API Service Layer for Doctor Who Library
+ * 
+ * Centralized API service providing type-safe HTTP client functionality
+ * Features:
+ * - Axios-based HTTP client with custom configuration
+ * - Request/response interceptors for logging and error handling
+ * - Comprehensive error handling with network fallbacks
+ * - Type-safe API functions for all endpoints
+ * - React Query integration with optimized query keys
+ * - Health check functionality for service monitoring
  */
 
 import axios, { type AxiosResponse } from 'axios';

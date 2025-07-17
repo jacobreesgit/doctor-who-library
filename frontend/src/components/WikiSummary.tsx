@@ -1,5 +1,14 @@
 /**
- * WikiSummary component with expandable "read more" functionality
+ * Wiki Summary Component
+ * 
+ * Displays TARDIS Wiki summary content with rich formatting
+ * Features:
+ * - Rich text rendering with HTML support
+ * - Expandable/collapsible content
+ * - Character limit with "read more" functionality
+ * - Link handling for external wiki links
+ * - Responsive text sizing
+ * - Loading states and error handling
  */
 
 import React, { useState } from 'react';

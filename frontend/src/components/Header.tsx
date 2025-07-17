@@ -1,5 +1,14 @@
 /**
- * Header component for Doctor Who Library
+ * Header Component for Doctor Who Library
+ * 
+ * Main application header providing branding and navigation
+ * Features:
+ * - Doctor Who Library branding with icon
+ * - Navigation links to key sections
+ * - Responsive layout with mobile-friendly design
+ * - TARDIS blue color scheme
+ * - Accessible navigation structure
+ * - External link to API documentation
  */
 
 import React from 'react';

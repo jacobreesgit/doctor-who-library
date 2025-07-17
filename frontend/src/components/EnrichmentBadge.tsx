@@ -1,5 +1,15 @@
 /**
- * EnrichmentBadge component with status and confidence score tooltip
+ * Enrichment Badge Component
+ * 
+ * Status badge for TARDIS Wiki enrichment with confidence indicators
+ * Features:
+ * - Multiple enrichment states (pending, enriched, failed, skipped)
+ * - Confidence percentage display
+ * - Animated states for pending items
+ * - Accessible with proper ARIA labels
+ * - Customizable sizes and variants
+ * - Real-time updates integration
+ * - Tooltip with detailed information
  */
 
 import React, { useState } from 'react';

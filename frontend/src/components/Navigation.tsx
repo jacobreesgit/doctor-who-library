@@ -1,6 +1,15 @@
 /**
- * Main Navigation component implementing hybrid navigation strategy
- * Stories/Universe/Explore/Recent tabs with contextual sub-navigation
+ * Main Navigation Component for Doctor Who Library
+ * 
+ * Implements hybrid navigation strategy with contextual sub-navigation
+ * Features:
+ * - Primary navigation tabs: Stories/Universe/Explore/Recent
+ * - Dropdown menus with contextual sub-navigation
+ * - Active state management and visual indicators
+ * - Integrated search functionality
+ * - Responsive design with mobile considerations
+ * - Accessibility support with keyboard navigation
+ * - Outside click handling for dropdown menus
  */
 
 import React, { useState } from 'react';
