@@ -22,6 +22,8 @@ import ExplorePage from './pages/ExplorePage';
 import RecentPage from './pages/RecentPage';
 import HomePage from './pages/HomePage';
 import CollectionsPage from './pages/CollectionsPage';
+import CollectionDetailPage from './pages/CollectionDetailPage';
+import ItemDetailPage from './pages/ItemDetailPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
@@ -52,6 +54,8 @@ function App() {
                 <Route path="/recent/*" element={<RecentPage />} />
                 <Route path="/dev" element={<HomePage />} />
                 <Route path="/collections" element={<CollectionsPage />} />
+                <Route path="/collections/:sectionName" element={<CollectionDetailPage />} />
+                <Route path="/item/:itemId" element={<ItemDetailPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>
