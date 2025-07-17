@@ -107,7 +107,6 @@ const LandingPage: React.FC = () => {
   }
 
   const heroItem = enrichedItems?.[0];
-  const enrichedItemsForRails = enrichedItems?.slice(1) || [];
 
   return (
     <div className="space-y-8">

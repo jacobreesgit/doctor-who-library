@@ -180,12 +180,59 @@ When the server is running, visit:
 - **ReDoc:** http://localhost:8000/redoc
 - **OpenAPI JSON:** http://localhost:8000/openapi.json
 
+## Data Standards and Naming Conventions
+
+The project follows strict naming conventions to ensure consistency across Excel imports, database storage, and API responses. **All data must adhere to the standards defined in `NAMING_CONVENTIONS.md`.**
+
+### Key Standards
+
+**Section Names:**
+- Must match predefined list exactly (68 approved sections)
+- Examples: `4th Doctor`, `Torchwood and Captain Jack`, `Dalek Empire & I, Davros`
+- Case-sensitive and no custom sections without approval
+
+**Story Titles:**
+- Use official BBC/Big Finish titles
+- Include subtitles if part of official title
+- No abbreviations unless part of official title
+- Maximum 200 characters
+
+**Excel Sheet Requirements:**
+- Required columns: `section_name`, `story_title`, `episode_title`, `serial_title`, `content_type`, `format`, `doctor`, `companions`, `story_number`, `series`, `broadcast_date`, `duration`
+- Optional columns: `writer`, `director`, `producer`, `release_date`, `cover_date`, `group_name`
+- Date format: ISO 8601 (`YYYY-MM-DD`)
+- Duration: Always in minutes (integers only)
+
+**Quality Assurance:**
+- All section names validated against approved list
+- No duplicate story entries within same section
+- Date formats consistent
+- Duration values reasonable (5-300 minutes)
+- Required fields populated
+
+### Special Cases
+
+**Multi-Doctor Stories:** Use primary Doctor's section (`The Day of the Doctor` → `11th Doctor`)
+**Crossover Stories:** Use primary character's section (`School Reunion` → `10th Doctor`)
+**Regeneration Stories:** Use outgoing Doctor's section (`The End of Time` → `10th Doctor`)
+**War Doctor Stories:** Use dedicated `War Doctor` section
+**Unbound Stories:** Use `Unbound Doctor` section
+
+**📋 Always consult `NAMING_CONVENTIONS.md` before adding or modifying data.**
+
 ## Common Tasks
 
 **Add new content:**
-1. Update Excel chronology file
-2. Run import: `dw-cli convert data/raw/DOCTOR\ WHO\ CHRONOLOGY.xlsx --clear`
-3. Run enrichment: `dw-cli enrich`
+1. **Verify naming conventions** - Check `NAMING_CONVENTIONS.md` for proper section/story naming
+2. Update Excel chronology file following required column structure
+3. Run import: `dw-cli convert data/raw/DOCTOR\ WHO\ CHRONOLOGY.xlsx --clear`
+4. Run enrichment: `dw-cli enrich`
+
+**Update existing data:**
+1. **Backup first** - Always export current data before changes
+2. **Follow naming conventions** - Ensure all updates match `NAMING_CONVENTIONS.md`
+3. **Test small batches** - Update 10-20 entries first
+4. **Verify enrichment** - Check that TARDIS Wiki links still work
 
 **Reset enrichment:**
 1. Use enricher service to reset status
@@ -195,4 +242,11 @@ When the server is running, visit:
 - Database file: `doctor_who_library.db`
 - Enable SQL logging: Set `DATABASE_ECHO=true` in `.env`
 
-This documentation provides the foundation for understanding and working with the Doctor Who Library codebase. The architecture is designed to be developer-friendly with clear separation of concerns and comprehensive CLI tooling.
+**Data validation:**
+- Section names must match approved list exactly
+- Story titles follow official naming standards
+- Excel sheets include all required columns
+- Dates use ISO 8601 format
+- Duration values are in minutes
+
+This documentation provides the foundation for understanding and working with the Doctor Who Library codebase. The architecture is designed to be developer-friendly with clear separation of concerns and comprehensive CLI tooling. **Always follow the naming conventions in `NAMING_CONVENTIONS.md` to maintain data consistency.**

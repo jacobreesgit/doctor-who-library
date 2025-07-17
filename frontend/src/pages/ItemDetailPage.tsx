@@ -22,7 +22,6 @@ import {
   UserIcon,
   FilmIcon,
   ClockIcon,
-  StarIcon,
   ArrowTopRightOnSquareIcon,
   PhotoIcon,
   BookOpenIcon,
@@ -33,7 +32,6 @@ import { libraryApi, queryKeys } from '../services/api';
 import ContentCard from '../components/ContentCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnrichmentBadge from '../components/EnrichmentBadge';
-import type { LibraryItemResponse } from '../types/api';
 
 const ItemDetailPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
