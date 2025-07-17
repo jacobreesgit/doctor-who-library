@@ -26,8 +26,8 @@ const LibraryGrid: React.FC<LibraryGridProps> = ({
     setCurrentPage(1);
   }, [enrichmentFilter]);
 
-  // Calculate offset for API call
-  const offset = (currentPage - 1) * itemsPerPage;
+  // Calculate offset for API call (currently using page-based pagination)
+  // const offset = (currentPage - 1) * itemsPerPage;
 
   // Build query parameters
   const queryParams = {

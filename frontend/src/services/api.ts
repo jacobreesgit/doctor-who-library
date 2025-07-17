@@ -129,6 +129,10 @@ export const queryKeys = {
     stats: () => ['library', 'stats'],
     sections: () => ['library', 'sections'],
     search: (query: LibrarySearchQuery) => ['library', 'search', query],
+    enriched: () => ['library', 'enriched'],
+    recent: () => ['library', 'recent'],
+    byDoctor: (doctor: string) => ['library', 'byDoctor', doctor],
+    spinoffs: () => ['library', 'spinoffs'],
   },
   health: {
     check: () => ['health', 'check'],
