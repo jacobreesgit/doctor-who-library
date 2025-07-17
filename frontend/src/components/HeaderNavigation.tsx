@@ -80,40 +80,20 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) =
   };
 
   return (
-    <div className={className}>
-      {/* Header Section */}
-      <header className="bg-blue-600 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+    <header className={`bg-blue-600 text-white shadow-lg ${className}`}>
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Left side - Brand and Navigation */}
+          <div className="flex items-center space-x-8">
             <Link to="/" className="flex items-center space-x-3">
-              <div className="text-2xl">📺</div>
+              <div className="text-xl">📺</div>
               <div>
-                <h1 className="text-xl font-bold">Doctor Who Library</h1>
-                <p className="text-xs text-blue-200">
-                  Your comprehensive guide to the Whoniverse
-                </p>
+                <h1 className="text-lg font-bold">Doctor Who Library</h1>
               </div>
             </Link>
             
-            {/* Right side actions */}
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/my-library"
-                className="text-blue-200 hover:text-white text-sm font-medium transition-colors"
-              >
-                My Library
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation Section */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-4">
-          {/* Main Navigation Tabs */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-8">
+            {/* Navigation Tabs */}
+            <nav className="flex items-center space-x-6">
               {mainTabs.map((tab) => {
                 const Icon = tab.icon;
                 const active = isActive(tab.href);
@@ -122,15 +102,15 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) =
                   <div key={tab.id} className="relative">
                     <button
                       onClick={() => handleDropdownToggle(tab.id)}
-                      className={`flex items-center space-x-2 py-4 px-2 text-sm font-medium transition-colors border-b-2 ${
+                      className={`flex items-center space-x-2 py-2 px-3 text-sm font-medium transition-colors rounded-md ${
                         active
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'bg-blue-500 text-white'
+                          : 'text-blue-200 hover:text-white hover:bg-blue-500'
                       }`}
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-4 w-4" />
                       <span>{tab.label}</span>
-                      <ChevronDownIcon className="h-4 w-4" />
+                      <ChevronDownIcon className="h-3 w-3" />
                     </button>
 
                     {/* Dropdown Menu */}
@@ -158,31 +138,37 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({ className = '' }) =
                   </div>
                 );
               })}
-            </div>
+            </nav>
+          </div>
 
-            {/* Search Bar */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search library..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
-                />
-              </div>
+          {/* Right side - Search and Actions */}
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search library..."
+                className="pl-9 pr-4 py-1.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48 text-gray-900 text-sm"
+              />
             </div>
+            <Link
+              to="/my-library"
+              className="text-blue-200 hover:text-white text-sm font-medium transition-colors"
+            >
+              My Library
+            </Link>
           </div>
         </div>
+      </div>
 
-        {/* Close dropdown when clicking outside */}
-        {activeDropdown && (
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setActiveDropdown(null)}
-          />
-        )}
-      </nav>
-    </div>
+      {/* Close dropdown when clicking outside */}
+      {activeDropdown && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setActiveDropdown(null)}
+        />
+      )}
+    </header>
   );
 };
 
