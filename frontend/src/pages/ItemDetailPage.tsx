@@ -32,6 +32,7 @@ import { libraryApi, queryKeys } from '../services/api';
 import ContentCard from '../components/ContentCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnrichmentBadge from '../components/EnrichmentBadge';
+import { getSectionEmoji } from '../utils/sections';
 
 const ItemDetailPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
@@ -46,8 +47,8 @@ const ItemDetailPage: React.FC = () => {
 
   // Fetch all items for related items recommendations
   const { data: allItems } = useQuery({
-    queryKey: queryKeys.library.items({ limit: 1000 }),
-    queryFn: () => libraryApi.getLibraryItems({ limit: 1000 }),
+    queryKey: queryKeys.library.items({ limit: 1000, sortBy: 'story_number', sortOrder: 'asc' }),
+    queryFn: () => libraryApi.getLibraryItems({ limit: 1000, sortBy: 'story_number', sortOrder: 'asc' }),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -64,31 +65,6 @@ const ItemDetailPage: React.FC = () => {
       .slice(0, 8);
   }, [item, allItems]);
 
-  const getSectionEmoji = (section: string): string => {
-    if (section?.includes('1st')) return '👴';
-    if (section?.includes('2nd')) return '🎭';
-    if (section?.includes('3rd')) return '🥋';
-    if (section?.includes('4th')) return '🧣';
-    if (section?.includes('5th')) return '🏏';
-    if (section?.includes('6th')) return '🌈';
-    if (section?.includes('7th')) return '🎩';
-    if (section?.includes('8th')) return '💫';
-    if (section?.includes('9th')) return '👂';
-    if (section?.includes('10th')) return '🕺';
-    if (section?.includes('11th')) return '🎀';
-    if (section?.includes('12th')) return '🎸';
-    if (section?.includes('13th')) return '👥';
-    if (section?.includes('14th')) return '🔄';
-    if (section?.includes('15th')) return '✨';
-    if (section?.includes('Torchwood')) return '🚀';
-    if (section?.includes('Sarah Jane')) return '👩‍🔬';
-    if (section?.includes('Dalek')) return '🔵';
-    if (section?.includes('Cybermen')) return '🤖';
-    if (section?.includes('Master')) return '👹';
-    if (section?.includes('War Doctor')) return '⚔️';
-    if (section?.includes('Documentaries')) return '📺';
-    return '📚';
-  };
 
   if (isLoading) {
     return (

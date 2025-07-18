@@ -5,6 +5,7 @@ from uuid import UUID
 
 from doctor_who_library.domain.entities.library_item import LibraryItem
 from doctor_who_library.domain.value_objects.enrichment_status import EnrichmentStatus
+from doctor_who_library.domain.services.section_validation_service import SectionValidationService
 from doctor_who_library.shared.exceptions.application import ServiceException
 from doctor_who_library.shared.exceptions.domain import EntityNotFoundException
 
@@ -13,7 +14,7 @@ class LibraryService:
     """Application service for library operations."""
     
     def __init__(self):
-        pass  # No repository dependency needed
+        self._section_validator = SectionValidationService()
     
     async def get_item_by_id(self, item_id: UUID) -> LibraryItem:
         """Get a library item by ID."""
@@ -26,7 +27,11 @@ class LibraryService:
             hex_id = str(item_id).replace('-', '')
             
             rows = execute_query(
-                "SELECT id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary "
+                "SELECT id, title, story_title, episode_title, serial_title, "
+                "content_type, section_name, group_name, doctor, companions, writer, director, producer, "
+                "story_number, series, format, duration, broadcast_date, release_date, cover_date, "
+                "enrichment_status, enrichment_confidence, enrichment_error, "
+                "wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at "
                 "FROM library_items WHERE id = ?", 
                 (hex_id,)
             )
@@ -35,7 +40,11 @@ class LibraryService:
                 raise EntityNotFoundException("LibraryItem", item_id)
             
             row = rows[0]
-            hex_id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary = row
+            (hex_id, title, story_title, episode_title, serial_title,
+             content_type, section_name, group_name, doctor, companions, writer, director, producer,
+             story_number, series, format, duration, broadcast_date, release_date, cover_date,
+             enrichment_status, enrichment_confidence, enrichment_error,
+             wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at) = row
             
             # Safe enrichment status conversion
             try:
@@ -43,17 +52,46 @@ class LibraryService:
             except ValueError:
                 status = EnrichmentStatus.PENDING
             
+            # Convert date strings to datetime objects if needed
+            def parse_datetime(date_str):
+                if date_str:
+                    try:
+                        return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                    except:
+                        return None
+                return None
+            
             item = LibraryItem(
                 id=item_id,
                 title=title or "Unknown Title",
+                display_title=title,  # Use title as display_title since it doesn't exist in DB
                 story_title=story_title,
+                episode_title=episode_title,
+                serial_title=serial_title,
+                content_type=None,  # ContentType enum handling can be added later
                 section_name=section_name,
+                group_name=group_name,
+                doctor=doctor,
+                companions=companions,
+                writer=writer,
+                director=director,
+                producer=producer,
+                story_number=story_number,
+                series=series,
+                format=format,
+                duration=duration,
+                broadcast_date=parse_datetime(broadcast_date),
+                release_date=parse_datetime(release_date),
+                cover_date=parse_datetime(cover_date),
                 enrichment_status=status,
                 enrichment_confidence=enrichment_confidence or 0.0,
+                enrichment_error=enrichment_error,
                 wiki_url=wiki_url,
                 wiki_summary=wiki_summary,
-                created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow(),
+                wiki_image_url=wiki_image_url,
+                wiki_search_term=wiki_search_term,
+                created_at=parse_datetime(created_at) or datetime.utcnow(),
+                updated_at=parse_datetime(updated_at) or datetime.utcnow(),
             )
             
             return item
@@ -75,16 +113,24 @@ class LibraryService:
             from doctor_who_library.domain.value_objects.enrichment_status import EnrichmentStatus
             from doctor_who_library.shared.database.connection import execute_query
             
-            # Get basic data with simple query
+            # Get complete data with all fields
             rows = execute_query(
-                "SELECT id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary "
+                "SELECT id, title, story_title, episode_title, serial_title, "
+                "content_type, section_name, group_name, doctor, companions, writer, director, producer, "
+                "story_number, series, format, duration, broadcast_date, release_date, cover_date, "
+                "enrichment_status, enrichment_confidence, enrichment_error, "
+                "wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at "
                 "FROM library_items LIMIT ? OFFSET ?", 
                 (limit if limit is not None else 50, offset)
             )
             
             items = []
             for row in rows:
-                hex_id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary = row
+                (hex_id, title, story_title, episode_title, serial_title,
+                 content_type, section_name, group_name, doctor, companions, writer, director, producer,
+                 story_number, series, format, duration, broadcast_date, release_date, cover_date,
+                 enrichment_status, enrichment_confidence, enrichment_error,
+                 wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at) = row
                 
                 # Convert hex ID to UUID
                 formatted_id = f"{hex_id[:8]}-{hex_id[8:12]}-{hex_id[12:16]}-{hex_id[16:20]}-{hex_id[20:]}"
@@ -96,17 +142,46 @@ class LibraryService:
                 except ValueError:
                     status = EnrichmentStatus.PENDING
                 
+                # Convert date strings to datetime objects if needed
+                def parse_datetime(date_str):
+                    if date_str:
+                        try:
+                            return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                        except:
+                            return None
+                    return None
+                
                 item = LibraryItem(
                     id=uuid_id,
                     title=title or "Unknown Title",
+                    display_title=title,  # Use title as display_title since it doesn't exist in DB
                     story_title=story_title,
+                    episode_title=episode_title,
+                    serial_title=serial_title,
+                    content_type=None,  # ContentType enum handling can be added later
                     section_name=section_name,
+                    group_name=group_name,
+                    doctor=doctor,
+                    companions=companions,
+                    writer=writer,
+                    director=director,
+                    producer=producer,
+                    story_number=story_number,
+                    series=series,
+                    format=format,
+                    duration=duration,
+                    broadcast_date=parse_datetime(broadcast_date),
+                    release_date=parse_datetime(release_date),
+                    cover_date=parse_datetime(cover_date),
                     enrichment_status=status,
                     enrichment_confidence=enrichment_confidence or 0.0,
+                    enrichment_error=enrichment_error,
                     wiki_url=wiki_url,
                     wiki_summary=wiki_summary,
-                    created_at=datetime.utcnow(),
-                    updated_at=datetime.utcnow(),
+                    wiki_image_url=wiki_image_url,
+                    wiki_search_term=wiki_search_term,
+                    created_at=parse_datetime(created_at) or datetime.utcnow(),
+                    updated_at=parse_datetime(updated_at) or datetime.utcnow(),
                 )
                 items.append(item)
             
@@ -137,9 +212,94 @@ class LibraryService:
     async def get_items_by_section(self, section_name: str) -> List[LibraryItem]:
         """Get items by section name."""
         try:
-            # TODO: Implement section filtering with direct database queries
-            # For now, return empty list
-            return []
+            # Validate section name first
+            validated_section = self._section_validator.validate_section_name(section_name)
+            
+            from uuid import UUID
+            from datetime import datetime
+            from doctor_who_library.shared.database.connection import execute_query
+            
+            # Get complete data filtered by section
+            rows = execute_query(
+                "SELECT id, title, story_title, episode_title, serial_title, "
+                "content_type, section_name, group_name, doctor, companions, writer, director, producer, "
+                "story_number, series, format, duration, broadcast_date, release_date, cover_date, "
+                "enrichment_status, enrichment_confidence, enrichment_error, "
+                "wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at "
+                "FROM library_items WHERE section_name = ?", 
+                (validated_section,)
+            )
+            
+            items = []
+            for row in rows:
+                (hex_id, title, story_title, episode_title, serial_title,
+                 content_type, section_name, group_name, doctor, companions, writer, director, producer,
+                 story_number, series, format, duration, broadcast_date, release_date, cover_date,
+                 enrichment_status, enrichment_confidence, enrichment_error,
+                 wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at) = row
+                
+                # Convert hex ID to UUID
+                formatted_id = f"{hex_id[:8]}-{hex_id[8:12]}-{hex_id[12:16]}-{hex_id[16:20]}-{hex_id[20:]}"
+                uuid_id = UUID(formatted_id)
+                
+                # Safe enrichment status conversion
+                try:
+                    status = EnrichmentStatus(enrichment_status) if enrichment_status else EnrichmentStatus.PENDING
+                except ValueError:
+                    status = EnrichmentStatus.PENDING
+                
+                # Convert date strings to datetime objects if needed
+                def parse_datetime(date_str):
+                    if date_str:
+                        try:
+                            return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                        except:
+                            return None
+                    return None
+                
+                item = LibraryItem(
+                    id=uuid_id,
+                    title=title or "Unknown Title",
+                    display_title=title,  # Use title as display_title since it doesn't exist in DB
+                    story_title=story_title,
+                    episode_title=episode_title,
+                    serial_title=serial_title,
+                    content_type=None,  # ContentType enum handling can be added later
+                    section_name=section_name,
+                    group_name=group_name,
+                    doctor=doctor,
+                    companions=companions,
+                    writer=writer,
+                    director=director,
+                    producer=producer,
+                    story_number=story_number,
+                    series=series,
+                    format=format,
+                    duration=duration,
+                    broadcast_date=parse_datetime(broadcast_date),
+                    release_date=parse_datetime(release_date),
+                    cover_date=parse_datetime(cover_date),
+                    enrichment_status=status,
+                    enrichment_confidence=enrichment_confidence or 0.0,
+                    enrichment_error=enrichment_error,
+                    wiki_url=wiki_url,
+                    wiki_summary=wiki_summary,
+                    wiki_image_url=wiki_image_url,
+                    wiki_search_term=wiki_search_term,
+                    created_at=parse_datetime(created_at) or datetime.utcnow(),
+                    updated_at=parse_datetime(updated_at) or datetime.utcnow(),
+                )
+                items.append(item)
+            
+            return items
+        except ValueError as e:
+            # Section validation error
+            raise ServiceException(
+                service_name="LibraryService",
+                operation="get_items_by_section",
+                message=str(e),
+                cause=e,
+            )
         except Exception as e:
             raise ServiceException(
                 service_name="LibraryService",
@@ -169,32 +329,69 @@ class LibraryService:
             from datetime import datetime
             from doctor_who_library.shared.database.connection import execute_query
             
-            # Get data filtered by status
+            # Get complete data filtered by status
             rows = execute_query(
-                "SELECT id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary "
+                "SELECT id, title, story_title, episode_title, serial_title, "
+                "content_type, section_name, group_name, doctor, companions, writer, director, producer, "
+                "story_number, series, format, duration, broadcast_date, release_date, cover_date, "
+                "enrichment_status, enrichment_confidence, enrichment_error, "
+                "wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at "
                 "FROM library_items WHERE enrichment_status = ?", 
                 (status.value,)
             )
             
             items = []
             for row in rows:
-                hex_id, title, story_title, section_name, enrichment_status, enrichment_confidence, wiki_url, wiki_summary = row
+                (hex_id, title, story_title, episode_title, serial_title,
+                 content_type, section_name, group_name, doctor, companions, writer, director, producer,
+                 story_number, series, format, duration, broadcast_date, release_date, cover_date,
+                 enrichment_status, enrichment_confidence, enrichment_error,
+                 wiki_url, wiki_summary, wiki_image_url, wiki_search_term, created_at, updated_at) = row
                 
                 # Convert hex ID to UUID
                 formatted_id = f"{hex_id[:8]}-{hex_id[8:12]}-{hex_id[12:16]}-{hex_id[16:20]}-{hex_id[20:]}"
                 uuid_id = UUID(formatted_id)
                 
+                # Convert date strings to datetime objects if needed
+                def parse_datetime(date_str):
+                    if date_str:
+                        try:
+                            return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                        except:
+                            return None
+                    return None
+                
                 item = LibraryItem(
                     id=uuid_id,
                     title=title or "Unknown Title",
+                    display_title=title,  # Use title as display_title since it doesn't exist in DB
                     story_title=story_title,
+                    episode_title=episode_title,
+                    serial_title=serial_title,
+                    content_type=None,  # ContentType enum handling can be added later
                     section_name=section_name,
+                    group_name=group_name,
+                    doctor=doctor,
+                    companions=companions,
+                    writer=writer,
+                    director=director,
+                    producer=producer,
+                    story_number=story_number,
+                    series=series,
+                    format=format,
+                    duration=duration,
+                    broadcast_date=parse_datetime(broadcast_date),
+                    release_date=parse_datetime(release_date),
+                    cover_date=parse_datetime(cover_date),
                     enrichment_status=status,  # Use the input status directly
                     enrichment_confidence=enrichment_confidence or 0.0,
+                    enrichment_error=enrichment_error,
                     wiki_url=wiki_url,
                     wiki_summary=wiki_summary,
-                    created_at=datetime.utcnow(),
-                    updated_at=datetime.utcnow(),
+                    wiki_image_url=wiki_image_url,
+                    wiki_search_term=wiki_search_term,
+                    created_at=parse_datetime(created_at) or datetime.utcnow(),
+                    updated_at=parse_datetime(updated_at) or datetime.utcnow(),
                 )
                 items.append(item)
             
@@ -257,5 +454,36 @@ class LibraryService:
                 service_name="LibraryService",
                 operation="get_library_stats",
                 message="Failed to get library statistics",
+                cause=e,
+            )
+    
+    async def get_approved_section_names(self) -> List[str]:
+        """Get all approved section names."""
+        try:
+            return self._section_validator.get_all_approved_section_names()
+        except Exception as e:
+            raise ServiceException(
+                service_name="LibraryService",
+                operation="get_approved_section_names",
+                message="Failed to get approved section names",
+                cause=e,
+            )
+    
+    async def validate_section_name(self, section_name: str) -> str:
+        """Validate a section name."""
+        try:
+            return self._section_validator.validate_section_name(section_name)
+        except ValueError as e:
+            raise ServiceException(
+                service_name="LibraryService",
+                operation="validate_section_name",
+                message=str(e),
+                cause=e,
+            )
+        except Exception as e:
+            raise ServiceException(
+                service_name="LibraryService",
+                operation="validate_section_name",
+                message=f"Failed to validate section name: {section_name}",
                 cause=e,
             )

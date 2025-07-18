@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HeaderNavigation from './components/HeaderNavigation';
+import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import StoriesPage from './pages/StoriesPage';
 import ExplorePage from './pages/ExplorePage';
@@ -24,6 +25,7 @@ import HomePage from './pages/HomePage';
 import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import ItemDetailPage from './pages/ItemDetailPage';
+import ApiDocumentationPage from './pages/ApiDocumentationPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
@@ -44,9 +46,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gray-50">
+          <div className="min-h-screen bg-gray-50 flex flex-col">
             <HeaderNavigation />
-            <main className="container mx-auto px-4 py-8">
+            <main className="container mx-auto px-4 py-8 flex-1">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/stories/*" element={<StoriesPage />} />
@@ -56,9 +58,11 @@ function App() {
                 <Route path="/collections" element={<CollectionsPage />} />
                 <Route path="/collections/:sectionName" element={<CollectionDetailPage />} />
                 <Route path="/item/:itemId" element={<ItemDetailPage />} />
+                <Route path="/api-docs" element={<ApiDocumentationPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>
+            <Footer />
           </div>
           <ReactQueryDevtools initialIsOpen={false} />
         </ErrorBoundary>

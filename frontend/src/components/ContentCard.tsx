@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import type { LibraryItem } from '../types/api';
+import { getSectionEmoji } from '../utils/sections';
 
 interface ContentCardProps {
   item: LibraryItem;
@@ -42,6 +43,38 @@ const ContentCard: React.FC<ContentCardProps> = ({
     return <StarIcon className="h-4 w-4" />;
   };
 
+  const getContentTypeDisplay = () => {
+    // Determine the primary content type
+    const contentType = item.content_type || 'Unknown';
+    
+    // Check if this is a section (created in LandingPage for navigation)
+    if (contentType === 'Section') {
+      return {
+        type: 'Section',
+        hierarchy: null,
+        badge: 'bg-purple-100 text-purple-800'
+      };
+    }
+    
+    // Check if this is a serial (has serial_title and it's different from title)
+    if (item.serial_title && item.serial_title !== item.title && item.serial_title.trim() !== '') {
+      return {
+        type: 'Serial',
+        hierarchy: `${item.story_title || item.serial_title} • ${item.section_name || 'Unknown Section'}`,
+        badge: 'bg-blue-100 text-blue-800'
+      };
+    }
+    
+    // This is a regular story - show section it belongs to
+    return {
+      type: 'Story',
+      hierarchy: item.section_name || null,
+      badge: 'bg-green-100 text-green-800'
+    };
+  };
+
+  const contentTypeInfo = getContentTypeDisplay();
+
   const cardClasses = `
     group relative bg-white rounded-lg shadow-sm border border-gray-200 
     hover:shadow-md transition-all duration-200 overflow-hidden
@@ -66,46 +99,19 @@ const ContentCard: React.FC<ContentCardProps> = ({
           />
         ) : (
           <div className={`${imageClasses} bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center`}>
-            {/* Doctor-specific placeholder or generic icon */}
-            {item.section_name?.includes('Doctor') ? (
-              <div className="text-4xl opacity-50">
-                {item.section_name?.includes('1st') ? '👴' :
-                 item.section_name?.includes('2nd') ? '🎭' :
-                 item.section_name?.includes('3rd') ? '🥋' :
-                 item.section_name?.includes('4th') ? '🧣' :
-                 item.section_name?.includes('5th') ? '🏏' :
-                 item.section_name?.includes('6th') ? '🌈' :
-                 item.section_name?.includes('7th') ? '🎩' :
-                 item.section_name?.includes('8th') ? '💫' :
-                 item.section_name?.includes('9th') ? '👂' :
-                 item.section_name?.includes('10th') ? '🕺' :
-                 item.section_name?.includes('11th') ? '🎀' :
-                 item.section_name?.includes('12th') ? '🎸' :
-                 item.section_name?.includes('13th') ? '👥' :
-                 item.section_name?.includes('14th') ? '🔄' :
-                 item.section_name?.includes('15th') ? '✨' :
-                 '🎭'}
-              </div>
-            ) : (
-              <PhotoIcon className="h-12 w-12 text-gray-300" />
-            )}
+            <div className="text-4xl opacity-50">
+              {getSectionEmoji(item.section_name || '')}
+            </div>
           </div>
         )}
 
-        {/* Enrichment Status Badge */}
-        {showEnrichmentStatus && (
-          <div className="absolute top-2 right-2">
-            <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getEnrichmentStatusColor()}`}>
-              {getEnrichmentStatusIcon()}
-              {isEnriched && (
-                <span>{confidencePercentage}%</span>
-              )}
-              {item.enrichment_status === 'pending' && (
-                <span>Enriching...</span>
-              )}
-            </span>
-          </div>
-        )}
+        {/* Content Type Badge */}
+        <div className="absolute top-2 left-2">
+          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${contentTypeInfo.badge}`}>
+            {contentTypeInfo.type}
+          </span>
+        </div>
+
 
         {/* Wiki Link Indicator */}
         {item.wiki_url && (
@@ -124,16 +130,23 @@ const ContentCard: React.FC<ContentCardProps> = ({
           {item.title}
         </h3>
 
-        {/* Metadata */}
-        <div className="flex flex-wrap items-center text-sm text-gray-500 mb-2">
-          {item.section_name && (
-            <span className="font-medium">{item.section_name}</span>
+        {/* Hierarchy Information */}
+        {contentTypeInfo.hierarchy && (
+          <div className="text-sm text-gray-600 mb-2">
+            <span className="font-medium">{contentTypeInfo.hierarchy}</span>
+          </div>
+        )}
+
+        {/* Additional Metadata */}
+        <div className="flex flex-wrap items-center text-xs text-gray-400 mb-2">
+          {item.story_number && (
+            <span className="font-mono bg-gray-100 px-1 py-0.5 rounded">#{item.story_number}</span>
           )}
-          {item.content_type && item.section_name && (
+          {item.story_number && item.format && (
             <span className="mx-1">•</span>
           )}
-          {item.content_type && (
-            <span>{item.content_type}</span>
+          {item.format && (
+            <span>{item.format}</span>
           )}
         </div>
 

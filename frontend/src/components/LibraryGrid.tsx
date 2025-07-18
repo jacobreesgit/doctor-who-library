@@ -33,6 +33,8 @@ const LibraryGrid: React.FC<LibraryGridProps> = ({
   const queryParams = {
     page: currentPage,
     size: itemsPerPage,
+    sortBy: 'story_number',
+    sortOrder: 'asc' as const,
     ...(enrichmentFilter && { enrichment_status: enrichmentFilter })
   };
 

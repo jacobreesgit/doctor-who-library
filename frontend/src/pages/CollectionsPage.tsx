@@ -17,6 +17,8 @@ import { ViewColumnsIcon } from "@heroicons/react/24/outline";
 import { libraryApi, queryKeys } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { LibraryItemResponse } from "../types/api";
+import { SECTION_CATEGORIES } from "../constants/sections";
+import { getSectionEmoji, getSectionSlug } from "../utils/sections";
 
 const CollectionsPage: React.FC = () => {
   // Fetch all library items
@@ -27,13 +29,13 @@ const CollectionsPage: React.FC = () => {
   } = useQuery({
     queryKey: queryKeys.library.items({
       limit: 10000,
-      sortBy: "section_name",
+      sortBy: "story_number",
       sortOrder: "asc",
     }),
     queryFn: () =>
       libraryApi.getLibraryItems({
         limit: 10000,
-        sortBy: "section_name",
+        sortBy: "story_number",
         sortOrder: "asc",
       }),
     staleTime: 5 * 60 * 1000,
@@ -89,96 +91,19 @@ const CollectionsPage: React.FC = () => {
   // Section categories for better organization
   const sectionCategories = useMemo(() => {
     if (!sections) return {};
-    
-    console.log('Raw sections data:', sections);
-    console.log('First section:', sections[0]);
 
     const categories: Record<string, string[]> = {};
 
     // Filter out undefined/null sections (sections are strings, not objects)
     const validSections = sections.filter((s) => s && typeof s === 'string');
-    console.log('Valid sections:', validSections);
     
-    // Classic Era Doctors
-    const classicDoctors = validSections.filter((s) =>
-      [
-        "1st Doctor",
-        "2nd Doctor",
-        "3rd Doctor",
-        "4th Doctor",
-        "5th Doctor",
-        "6th Doctor",
-        "7th Doctor",
-        "8th Doctor",
-      ].includes(s)
-    );
-    if (classicDoctors.length > 0) {
-      categories["Classic Era Doctors"] = classicDoctors;
-    }
-
-    // Modern Era Doctors
-    const modernDoctors = validSections.filter((s) =>
-      [
-        "9th Doctor",
-        "10th Doctor",
-        "11th Doctor",
-        "12th Doctor",
-        "13th Doctor",
-        "14th Doctor",
-        "15th Doctor",
-      ].includes(s)
-    );
-    if (modernDoctors.length > 0) {
-      categories["Modern Era Doctors"] = modernDoctors;
-    }
-
-    // Special Doctors
-    const specialDoctors = validSections.filter((s) =>
-      ["War Doctor", "Fugitive Doctor", "Curator", "Unbound Doctor"].includes(s)
-    );
-    if (specialDoctors.length > 0) {
-      categories["Special Doctors"] = specialDoctors;
-    }
-
-    // Spin-offs & Companions
-    const spinoffs = validSections.filter((s) =>
-      [
-        "Torchwood and Captain Jack",
-        "Sarah Jane Smith",
-        "Class",
-        "K-9",
-        "UNIT",
-      ].includes(s)
-    );
-    if (spinoffs.length > 0) {
-      categories["Spin-offs & Companions"] = spinoffs;
-    }
-
-    // Villains & Monsters
-    const villains = validSections.filter((s) =>
-      [
-        "Dalek Empire & I, Davros",
-        "Cybermen",
-        "The Master",
-        "War Master",
-        "Missy",
-      ].includes(s)
-    );
-    if (villains.length > 0) {
-      categories["Villains & Monsters"] = villains;
-    }
-
-    // Special Collections
-    const specialCollections = validSections.filter((s) =>
-      [
-        "Time Lord Victorious Chronology",
-        "Tales from New Earth",
-        "Documentaries",
-      ].includes(s)
-    );
-    if (specialCollections.length > 0) {
-      categories["Special Collections"] = specialCollections;
-    }
+    // Use predefined categories from constants
+    Object.entries(SECTION_CATEGORIES).forEach(([categoryName, approvedSections]) => {
+      const foundSections = validSections.filter((s) => approvedSections.includes(s));
+      if (foundSections.length > 0) {
+        categories[categoryName] = foundSections;
+      }
+    });
 
     // Add any remaining sections to "Other Collections"
     const allCategorized = Object.values(categories).flat();
@@ -194,36 +119,6 @@ const CollectionsPage: React.FC = () => {
 
     return categories;
   }, [sections]);
-
-  const getSectionEmoji = (section: string): string => {
-    if (!section) return "📚";
-    if (section.includes("1st")) return "👴";
-    if (section.includes("2nd")) return "🎭";
-    if (section.includes("3rd")) return "🥋";
-    if (section.includes("4th")) return "🧣";
-    if (section.includes("5th")) return "🏏";
-    if (section.includes("6th")) return "🌈";
-    if (section.includes("7th")) return "🎩";
-    if (section.includes("8th")) return "💫";
-    if (section.includes("9th")) return "👂";
-    if (section.includes("10th")) return "🕺";
-    if (section.includes("11th")) return "🎀";
-    if (section.includes("12th")) return "🎸";
-    if (section.includes("13th")) return "👥";
-    if (section.includes("14th")) return "🔄";
-    if (section.includes("15th")) return "✨";
-    if (section.includes("War Doctor")) return "⚔️";
-    if (section.includes("Fugitive Doctor")) return "🏃‍♀️";
-    if (section.includes("Curator")) return "🖼️";
-    if (section.includes("Unbound")) return "🔗";
-    if (section.includes("Torchwood")) return "🚀";
-    if (section.includes("Sarah Jane")) return "👩‍🔬";
-    if (section.includes("Dalek")) return "🔵";
-    if (section.includes("Cybermen")) return "🤖";
-    if (section.includes("Master")) return "👹";
-    if (section.includes("Documentaries")) return "📺";
-    return "📚";
-  };
 
   if (isLoading) {
     return (
@@ -262,9 +157,7 @@ const CollectionsPage: React.FC = () => {
       {/* Collection Categories */}
       <div className="space-y-12">
         {Object.entries(sectionCategories).map(
-          ([categoryName, categorySections]) => {
-            console.log('Category:', categoryName, 'Sections:', categorySections);
-            return (
+          ([categoryName, categorySections]) => (
             <div key={categoryName} className="space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -275,7 +168,6 @@ const CollectionsPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {categorySections.map((section, index) => {
-                  console.log('Processing section:', section, 'Type:', typeof section);
                   if (!section || section.trim() === '') return null;
                   const items = itemsBySection[section] || [];
                   const stats = sectionStats[section] || {
@@ -288,7 +180,7 @@ const CollectionsPage: React.FC = () => {
                   return (
                     <Link
                       key={`${section}-${index}`}
-                      to={`/collections/${encodeURIComponent(section)}`}
+                      to={`/collections/${getSectionSlug(section)}`}
                       className="group bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 overflow-hidden"
                     >
                       {/* Collection Header */}
@@ -385,8 +277,7 @@ const CollectionsPage: React.FC = () => {
                 })}
               </div>
             </div>
-            );
-          }
+          )
         )}
       </div>
 

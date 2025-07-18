@@ -146,6 +146,7 @@ export const queryKeys = {
     classicDoctors: () => ['library', 'classicDoctors'],
     specialCollections: () => ['library', 'specialCollections'],
     villains: () => ['library', 'villains'],
+    sampleStories: () => ['library', 'sampleStories'],
   },
   health: {
     check: () => ['health', 'check'],

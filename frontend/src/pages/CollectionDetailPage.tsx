@@ -26,6 +26,7 @@ import { libraryApi, queryKeys } from "../services/api";
 import ContentCard from "../components/ContentCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import type { EnrichmentStatus } from "../types/api";
+import { getSectionEmoji } from "../utils/sections";
 
 type SortField =
   | "title"
@@ -44,7 +45,7 @@ const CollectionDetailPage: React.FC = () => {
   const { sectionName } = useParams<{ sectionName: string }>();
   const decodedSectionName = decodeURIComponent(sectionName || "");
 
-  const [sortField, setSortField] = useState<SortField>("title");
+  const [sortField, setSortField] = useState<SortField>("story_number");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [filters, setFilters] = useState<Filters>({
     contentType: "",
@@ -153,31 +154,6 @@ const CollectionDetailPage: React.FC = () => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const getSectionEmoji = (section: string): string => {
-    if (section.includes("1st")) return "👴";
-    if (section.includes("2nd")) return "🎭";
-    if (section.includes("3rd")) return "🥋";
-    if (section.includes("4th")) return "🧣";
-    if (section.includes("5th")) return "🏏";
-    if (section.includes("6th")) return "🌈";
-    if (section.includes("7th")) return "🎩";
-    if (section.includes("8th")) return "💫";
-    if (section.includes("9th")) return "👂";
-    if (section.includes("10th")) return "🕺";
-    if (section.includes("11th")) return "🎀";
-    if (section.includes("12th")) return "🎸";
-    if (section.includes("13th")) return "👥";
-    if (section.includes("14th")) return "🔄";
-    if (section.includes("15th")) return "✨";
-    if (section.includes("Torchwood")) return "🚀";
-    if (section.includes("Sarah Jane")) return "👩‍🔬";
-    if (section.includes("Dalek")) return "🔵";
-    if (section.includes("Cybermen")) return "🤖";
-    if (section.includes("Master")) return "👹";
-    if (section.includes("War Doctor")) return "⚔️";
-    if (section.includes("Documentaries")) return "📺";
-    return "📚";
-  };
 
   if (isLoading) {
     return (
@@ -287,9 +263,9 @@ const CollectionDetailPage: React.FC = () => {
               }}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
             >
+              <option value="story_number-asc">Story Number (Low-High)</option>
               <option value="title-asc">Title (A-Z)</option>
               <option value="title-desc">Title (Z-A)</option>
-              <option value="story_number-asc">Story Number (Low-High)</option>
               <option value="story_number-desc">Story Number (High-Low)</option>
               <option value="broadcast_date-asc">
                 Broadcast Date (Old-New)

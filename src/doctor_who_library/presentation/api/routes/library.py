@@ -79,6 +79,30 @@ class PaginatedLibraryResponse(BaseModel):
 router = APIRouter(prefix="/api/library", tags=["library"])
 
 
+@router.get("/sections/validate/{section_name}", response_model=Dict[str, Any])
+@inject
+async def validate_section_name(
+    section_name: str,
+    service: LibraryService = Depends(Provide[Container.library_service]),
+) -> Dict[str, Any]:
+    """Validate a section name and return validation result."""
+    try:
+        validated_name = await service.validate_section_name(section_name)
+        return {
+            "valid": True,
+            "section_name": validated_name,
+            "message": "Section name is valid"
+        }
+    except ServiceException as e:
+        return {
+            "valid": False,
+            "section_name": section_name,
+            "message": str(e)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @router.get("/items", response_model=PaginatedLibraryResponse)
 @inject
 async def get_library_items(
@@ -108,9 +132,15 @@ async def get_library_items(
             total = len(items)
             items = items[offset:offset + limit]
         elif section:
-            items = await service.get_items_by_section(section)
-            total = len(items)
-            items = items[offset:offset + limit]
+            try:
+                items = await service.get_items_by_section(section)
+                total = len(items)
+                items = items[offset:offset + limit]
+            except ValueError as e:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=str(e)
+                )
         elif group:
             items = await service.get_items_by_group(group)
             total = len(items)
@@ -205,16 +235,10 @@ async def get_library_stats(
 async def get_library_sections(
     service: LibraryService = Depends(Provide[Container.library_service]),
 ) -> List[str]:
-    """Get all unique library sections."""
+    """Get all approved library sections."""
     try:
-        # Use a direct database query to get distinct sections efficiently
-        from doctor_who_library.shared.database.connection import execute_query
-        
-        rows = execute_query(
-            "SELECT DISTINCT section_name FROM library_items WHERE section_name IS NOT NULL ORDER BY section_name"
-        )
-        
-        sections = [row[0] for row in rows]
+        # Return approved section names from the validation service
+        sections = await service.get_approved_section_names()
         return sections
     except ServiceException as e:
         raise HTTPException(status_code=500, detail=str(e))
