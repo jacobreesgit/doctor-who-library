@@ -20,7 +20,7 @@ const EnrichmentStats: React.FC<EnrichmentStatsProps> = ({
 }) => {
   if (isLoading || !stats) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="enrichment-stats bg-white rounded-lg shadow-md p-6 mb-8">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -45,7 +45,7 @@ const EnrichmentStats: React.FC<EnrichmentStatsProps> = ({
   const enrichmentProgress = totalItems > 0 ? (enrichedCount / totalItems) * 100 : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+    <div className="enrichment-stats bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Library Statistics</h2>
         {activeFilter && (

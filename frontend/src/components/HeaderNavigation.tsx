@@ -24,8 +24,10 @@ import {
   MagnifyingGlassIcon,
   Bars3Icon,
   XMarkIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { getSectionSlug } from "../utils/sections";
+import { useAuth } from "../contexts/AuthContext";
 
 interface HeaderNavigationProps {
   className?: string;
@@ -37,6 +39,7 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signInWithGoogle, signOut, loading } = useAuth();
 
   const mainTabs = [
     {
@@ -123,7 +126,7 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   };
 
   return (
-    <header className={`bg-blue-600 text-white shadow-lg ${className}`}>
+    <header className={`header-navigation bg-blue-600 text-white shadow-lg ${className}`}>
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Left side - Brand */}
@@ -184,8 +187,8 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
               })}
             </nav>
 
-            {/* Desktop Search */}
-            <div className="flex items-center">
+            {/* Desktop Search and Auth */}
+            <div className="flex items-center space-x-4">
               <div className="relative">
                 <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -194,6 +197,75 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
                   className="pl-9 pr-4 py-1.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48 text-gray-900 text-sm"
                 />
               </div>
+              
+              {/* Authentication */}
+              {loading ? (
+                <div className="w-8 h-8 rounded-full bg-blue-500 animate-pulse"></div>
+              ) : user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => handleDropdownToggle('user')}
+                    className="flex items-center space-x-2 p-2 rounded-md text-blue-200 hover:text-white hover:bg-blue-500 transition-colors"
+                  >
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt={user.user_metadata?.full_name || user.email}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <UserCircleIcon className="h-8 w-8" />
+                    )}
+                    <span className="hidden md:block text-sm font-medium">
+                      {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    </span>
+                    <ChevronDownIcon className="h-4 w-4" />
+                  </button>
+                  
+                  {/* User Dropdown */}
+                  {activeDropdown === 'user' && (
+                    <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="py-2">
+                        <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                          {user.email}
+                        </div>
+                        <div className="border-t border-gray-100 mt-2">
+                          <Link
+                            to="/favorites"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            My Favorites
+                          </Link>
+                          <Link
+                            to="/watch-history"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            Watch History
+                          </Link>
+                          <button
+                            onClick={() => {
+                              signOut();
+                              setActiveDropdown(null);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 hover:text-red-700"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={signInWithGoogle}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white text-blue-600 rounded-md font-medium hover:bg-blue-50 transition-colors"
+                >
+                  <span>Sign in with Google</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -276,6 +348,65 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
               })}
             </nav>
 
+            {/* Mobile Authentication */}
+            <div className="mt-4 pt-4 border-t border-blue-500">
+              {loading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 animate-pulse"></div>
+                </div>
+              ) : user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3 px-4 py-2 text-blue-200">
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt={user.user_metadata?.full_name || user.email}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <UserCircleIcon className="h-8 w-8" />
+                    )}
+                    <div>
+                      <p className="font-medium">{user.user_metadata?.full_name || user.email?.split('@')[0]}</p>
+                      <p className="text-xs text-blue-300">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/favorites"
+                    className="block w-full text-left py-3 px-4 text-sm font-medium text-blue-200 hover:text-white hover:bg-blue-500 rounded-md transition-colors"
+                    onClick={closeMobileMenu}
+                  >
+                    My Favorites
+                  </Link>
+                  <Link
+                    to="/watch-history"
+                    className="block w-full text-left py-3 px-4 text-sm font-medium text-blue-200 hover:text-white hover:bg-blue-500 rounded-md transition-colors"
+                    onClick={closeMobileMenu}
+                  >
+                    Watch History
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      closeMobileMenu();
+                    }}
+                    className="block w-full text-left py-3 px-4 text-sm font-medium text-red-300 hover:text-red-200 hover:bg-blue-500 rounded-md transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    signInWithGoogle();
+                    closeMobileMenu();
+                  }}
+                  className="w-full px-4 py-3 bg-white text-blue-600 rounded-md font-medium hover:bg-blue-50 transition-colors"
+                >
+                  Sign in with Google
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

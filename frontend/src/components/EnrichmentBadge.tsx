@@ -79,7 +79,7 @@ const EnrichmentBadge: React.FC<EnrichmentBadgeProps> = ({
   const sizeClasses = size === 'sm' ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-sm';
 
   return (
-    <div className="relative inline-flex items-center">
+    <div className="enrichment-badge relative inline-flex items-center">
       <span
         className={`inline-flex items-center space-x-1 font-medium rounded-full border ${config.className} ${sizeClasses} cursor-default`}
         onMouseEnter={() => setShowTooltip(true)}

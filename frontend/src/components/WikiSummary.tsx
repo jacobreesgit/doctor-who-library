@@ -36,7 +36,7 @@ const WikiSummary: React.FC<WikiSummaryProps> = ({
     : summary;
 
   return (
-    <div className={`text-sm text-gray-700 ${className}`}>
+    <div className={`wiki-summary text-sm text-gray-700 ${className}`}>
       <p className="leading-relaxed">
         {displayText}
         {needsTruncation && (

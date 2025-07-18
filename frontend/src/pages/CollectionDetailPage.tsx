@@ -190,7 +190,7 @@ const CollectionDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="collection-detail-page space-y-6">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2 text-sm text-gray-500">
         <Link

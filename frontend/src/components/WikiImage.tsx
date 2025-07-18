@@ -37,7 +37,7 @@ const WikiImage: React.FC<WikiImageProps> = ({
   if (!src || hasError) {
     return (
       <div 
-        className={`flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg ${className}`}
+        className={`wiki-image flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg ${className}`}
         style={{ width, height }}
       >
         <div className="text-center">
@@ -49,7 +49,7 @@ const WikiImage: React.FC<WikiImageProps> = ({
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-lg ${className}`} style={{ width, height }}>
+    <div className={`wiki-image relative overflow-hidden rounded-lg ${className}`} style={{ width, height }}>
       {/* Loading skeleton */}
       {isLoading && (
         <div 

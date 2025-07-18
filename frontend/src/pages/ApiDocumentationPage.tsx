@@ -105,7 +105,7 @@ const ApiDocumentationPage: React.FC = () => {
   const allSections = Object.values(APPROVED_SECTIONS).flat();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="api-documentation-page max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center py-8">
         <div className="flex items-center justify-center space-x-3 mb-4">

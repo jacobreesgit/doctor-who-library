@@ -16,18 +16,13 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { 
-  BookOpenIcon, 
-  FilmIcon, 
-  DocumentTextIcon,
-  ChevronRightIcon,
-  StarIcon
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { libraryApi, queryKeys } from '../services/api';
 import HeroSection from '../components/HeroSection';
 import ContentRail from '../components/ContentRail';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getSectionEmoji, getSectionSlug } from '../utils/sections';
-import { APPROVED_SECTIONS } from '../constants/sections';
 
 const LandingPage: React.FC = () => {
   // Fetch enriched content for hero and rails
@@ -143,7 +138,7 @@ const LandingPage: React.FC = () => {
   const heroItem = enrichedItems?.[0];
 
   return (
-    <div className="space-y-8">
+    <div className="landing-page space-y-8">
       {/* Hero Section */}
       {heroItem && (
         <HeroSection 
@@ -165,6 +160,7 @@ const LandingPage: React.FC = () => {
             ...(sections?.slice(0, 8).map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -175,12 +171,13 @@ const LandingPage: React.FC = () => {
               updated_at: new Date().toISOString(),
             })) || []),
             // Mix in some featured stories
-            ...(sampleStories?.eighthDoctor?.items?.slice(0, 4) || []),
-            ...(sampleStories?.torchwood?.items?.slice(0, 4) || []),
+            ...(sampleStories?.eighthDoctor?.slice(0, 4) || []),
+            ...(sampleStories?.torchwood?.slice(0, 4) || []),
             // Add more sections
             ...(sections?.slice(8, 16).map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -191,7 +188,7 @@ const LandingPage: React.FC = () => {
               updated_at: new Date().toISOString(),
             })) || []),
             // Mix in Dalek stories
-            ...(sampleStories?.daleks?.items?.slice(0, 4) || []),
+            ...(sampleStories?.daleks?.slice(0, 4) || []),
           ]}
           isLoading={sectionsLoading || storiesLoading}
           viewAllLink="/collections"
@@ -206,6 +203,7 @@ const LandingPage: React.FC = () => {
             ...(['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'].map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -231,6 +229,7 @@ const LandingPage: React.FC = () => {
             ...(['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'].map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -256,6 +255,7 @@ const LandingPage: React.FC = () => {
             ...(['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'].map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -281,6 +281,7 @@ const LandingPage: React.FC = () => {
             ...(['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries', 'War Doctor'].map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
@@ -306,6 +307,7 @@ const LandingPage: React.FC = () => {
             ...(['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'].map(section => ({
               id: section,
               title: section,
+              display_title: section,
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,

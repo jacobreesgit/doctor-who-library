@@ -23,7 +23,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ item, className = '' }) => {
   const hasWikiData = item.wiki_url || item.wiki_summary || item.wiki_image_url;
 
   return (
-    <div className={`relative overflow-hidden rounded-lg ${className}`}>
+    <div className={`hero-section relative overflow-hidden rounded-lg ${className}`}>
       {/* Background Image */}
       <div className="absolute inset-0">
         {item.wiki_image_url ? (

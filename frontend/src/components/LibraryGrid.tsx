@@ -109,7 +109,7 @@ const LibraryGrid: React.FC<LibraryGridProps> = ({
   const hasPrevPage = currentPage > 1;
 
   return (
-    <div className="space-y-6">
+    <div className="library-grid space-y-6">
       {/* Loading indicator for pagination */}
       {isFetching && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">

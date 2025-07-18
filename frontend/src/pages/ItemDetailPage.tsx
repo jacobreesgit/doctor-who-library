@@ -93,7 +93,7 @@ const ItemDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="item-detail-page space-y-8">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2 text-sm text-gray-500">
         <Link to="/collections" className="hover:text-blue-600 transition-colors">

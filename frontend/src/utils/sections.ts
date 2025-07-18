@@ -9,7 +9,7 @@ import { ALL_APPROVED_SECTIONS } from '../constants/sections';
  * Check if a section name is in the approved list
  */
 export const isValidSection = (section: string): boolean => {
-  return ALL_APPROVED_SECTIONS.includes(section);
+  return (ALL_APPROVED_SECTIONS as readonly string[]).includes(section);
 };
 
 /**

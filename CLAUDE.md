@@ -161,11 +161,58 @@ All tables use UUID primary keys and include created/updated timestamps.
 - **ruff** - Additional linting
 - **pytest** - Testing framework (no tests currently implemented)
 
+### Frontend Development Standards
+
+**React Component Structure:**
+All React components must follow these patterns:
+
+**CSS Class Naming:**
+- Every React component must have a CSS class on its top-level element
+- CSS class name should be the filename converted from PascalCase to kebab-case
+- Examples:
+  - `HeaderNavigation.tsx` → `header-navigation` class
+  - `ContentCard.tsx` → `content-card` class
+  - `LandingPage.tsx` → `landing-page` class
+  - `ApiDocumentationPage.tsx` → `api-documentation-page` class
+
+**Component Documentation:**
+- All new components must include JSDoc header with this format:
+```typescript
+/**
+ * Component Name
+ * 
+ * Brief description of component purpose
+ */
+```
+- Include line breaks and punctuation exactly as shown
+- Be concise but descriptive about component functionality
+
+**Implementation Pattern:**
+```typescript
+/**
+ * Example Component
+ * 
+ * Sample component showing proper CSS class usage
+ */
+import React from 'react';
+
+const ExampleComponent: React.FC = () => {
+  return (
+    <div className="example-component existing-classes">
+      {/* Component content */}
+    </div>
+  );
+};
+
+export default ExampleComponent;
+```
+
 ### Architecture Decisions
 - **Developer-focused:** Enrichment is CLI-only, not exposed via API
 - **Confidence scoring:** Wiki enrichment includes quality metrics
 - **Flexible data model:** Supports various Doctor Who media types
 - **Async processing:** Wiki enrichment uses async for better performance
+- **Component identification:** All React components use filename-based CSS classes for easier styling and debugging
 
 ### Future Considerations
 - No frontend currently exists

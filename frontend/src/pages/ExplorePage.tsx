@@ -10,7 +10,7 @@ import NewAdditionsView from '../components/NewAdditionsView';
 
 const ExplorePage: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="explore-page space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
           Explore the Whoniverse

@@ -79,7 +79,7 @@ const EnrichmentManager: React.FC<EnrichmentManagerProps> = ({
 
   if (variant === 'global') {
     return (
-      <div className="bg-white rounded-lg shadow-md border border-red-200 p-6">
+      <div className="enrichment-manager bg-white rounded-lg shadow-md border border-red-200 p-6">
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
             <span className="text-red-600 text-lg">⚠️</span>
@@ -148,7 +148,7 @@ const EnrichmentManager: React.FC<EnrichmentManagerProps> = ({
 
   // Individual item variant
   return (
-    <div className="inline-block">
+    <div className="enrichment-manager inline-block">
       {!isConfirmingReset ? (
         <button
           onClick={handleReset}

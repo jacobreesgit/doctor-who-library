@@ -26,7 +26,11 @@ import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import ApiDocumentationPage from './pages/ApiDocumentationPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
+import FavoritesPage from './pages/FavoritesPage';
+import WatchHistoryPage from './pages/WatchHistoryPage';
 import ErrorBoundary from './components/ErrorBoundary';
+import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 
 // Create a client for React Query
@@ -44,36 +48,41 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <ErrorBoundary>
-          <div className="min-h-screen bg-gray-50 flex flex-col">
-            <HeaderNavigation />
-            <main className="container mx-auto px-4 py-8 flex-1">
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/stories/*" element={<StoriesPage />} />
-                <Route path="/explore/*" element={<ExplorePage />} />
-                <Route path="/recent/*" element={<RecentPage />} />
-                <Route path="/dev" element={<HomePage />} />
-                <Route path="/collections" element={<CollectionsPage />} />
-                <Route path="/collections/:sectionName" element={<CollectionDetailPage />} />
-                <Route path="/item/:itemId" element={<ItemDetailPage />} />
-                <Route path="/api-docs" element={<ApiDocumentationPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </ErrorBoundary>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <ErrorBoundary>
+            <div className="app min-h-screen bg-gray-50 flex flex-col">
+              <HeaderNavigation />
+              <main className="container mx-auto px-4 py-8 flex-1">
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/stories/*" element={<StoriesPage />} />
+                  <Route path="/explore/*" element={<ExplorePage />} />
+                  <Route path="/recent/*" element={<RecentPage />} />
+                  <Route path="/dev" element={<HomePage />} />
+                  <Route path="/collections" element={<CollectionsPage />} />
+                  <Route path="/collections/:sectionName" element={<CollectionDetailPage />} />
+                  <Route path="/item/:itemId" element={<ItemDetailPage />} />
+                  <Route path="/api-docs" element={<ApiDocumentationPage />} />
+                  <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                  <Route path="/favorites" element={<FavoritesPage />} />
+                  <Route path="/watch-history" element={<WatchHistoryPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </ErrorBoundary>
+        </Router>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
 
 // Simple NotFound component
 const NotFoundPage = () => (
-  <div className="text-center py-12">
+  <div className="not-found-page text-center py-12">
     <h1 className="text-2xl font-bold text-gray-900 mb-4">Page Not Found</h1>
     <p className="text-gray-600">The page you're looking for doesn't exist.</p>
   </div>

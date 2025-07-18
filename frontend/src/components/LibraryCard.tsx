@@ -27,7 +27,7 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ item, onClick }) => {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md border-2 overflow-hidden card-hover ${
+      className={`library-card bg-white rounded-lg shadow-md border-2 overflow-hidden card-hover ${
         isEnriched && hasHighConfidence 
           ? 'border-green-200 bg-gradient-to-br from-green-50 to-white high-quality-glow' 
           : isEnriched 

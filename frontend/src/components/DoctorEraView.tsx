@@ -9,7 +9,7 @@ const DoctorEraView: React.FC = () => {
   const { doctorId } = useParams();
 
   return (
-    <div className="space-y-6">
+    <div className="doctor-era-view space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900">
           {doctorId ? `${doctorId} Stories` : 'Browse by Doctor'}

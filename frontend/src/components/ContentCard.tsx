@@ -5,43 +5,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  StarIcon, 
-  ClockIcon, 
-  PhotoIcon,
+  ClockIcon,
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import type { LibraryItem } from '../types/api';
 import { getSectionEmoji } from '../utils/sections';
+import FavoriteButton from './FavoriteButton';
+import WatchedButton from './WatchedButton';
 
 interface ContentCardProps {
   item: LibraryItem;
   variant?: 'default' | 'compact' | 'list';
-  showEnrichmentStatus?: boolean;
   className?: string;
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({
   item,
   variant = 'default',
-  showEnrichmentStatus = false,
   className = ''
 }) => {
   const isEnriched = item.enrichment_status === 'enriched';
-  const confidencePercentage = Math.round((item.enrichment_confidence || 0) * 100);
-
-  const getEnrichmentStatusColor = () => {
-    if (item.enrichment_status === 'enriched') return 'bg-green-100 text-green-800';
-    if (item.enrichment_status === 'pending') return 'bg-yellow-100 text-yellow-800';
-    if (item.enrichment_status === 'failed') return 'bg-red-100 text-red-800';
-    return 'bg-gray-100 text-gray-800';
-  };
-
-  const getEnrichmentStatusIcon = () => {
-    if (item.enrichment_status === 'enriched') return <StarSolidIcon className="h-4 w-4" />;
-    if (item.enrichment_status === 'pending') return <ClockIcon className="h-4 w-4" />;
-    return <StarIcon className="h-4 w-4" />;
-  };
 
   const getContentTypeDisplay = () => {
     // Determine the primary content type
@@ -88,7 +71,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
   `;
 
   return (
-    <Link to={`/item/${item.id}`} className={cardClasses}>
+    <Link to={`/item/${item.id}`} className={`content-card ${cardClasses}`}>
       {/* Image Section */}
       <div className="relative overflow-hidden">
         {item.wiki_image_url ? (
@@ -113,14 +96,18 @@ const ContentCard: React.FC<ContentCardProps> = ({
         </div>
 
 
-        {/* Wiki Link Indicator */}
-        {item.wiki_url && (
-          <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="bg-blue-600 text-white p-1 rounded-full">
-              <ArrowTopRightOnSquareIcon className="h-3 w-3" />
-            </div>
+        {/* User Action Buttons */}
+        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center space-x-1">
+            <FavoriteButton itemId={item.id} size="sm" />
+            <WatchedButton itemId={item.id} size="sm" />
+            {item.wiki_url && (
+              <div className="bg-blue-600 text-white p-1 rounded-full">
+                <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Content Section */}
