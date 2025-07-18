@@ -18,7 +18,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpenIcon,
-  SparklesIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
   Bars3Icon,
@@ -77,49 +76,15 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
 
   const mainTabs: MainTab[] = [
     {
-      id: "browse",
-      label: "Browse All",
-      icon: BookOpenIcon,
-      href: "/collections",
-      description: "Browse all Doctor Who content",
-      subItems: [],
-    },
-    {
       id: "doctors",
       label: "Doctors",
       icon: BookOpenIcon,
       href: "/doctors",
       description: "Browse by Doctor era and incarnation",
-      subItems: [
-        // Fugitive Doctor first
-        { label: "Fugitive Doctor", href: `/collections/${getSectionSlug("Fugitive Doctor")}` },
-        // Classic Era Doctors (1st-8th)
-        ...SECTION_CATEGORIES['Classic Era Doctors'].map(doctor => ({
-          label: doctor,
-          href: `/collections/${getSectionSlug(doctor)}`
-        })),
-        // War Doctor before 9th
-        { label: "War Doctor", href: `/collections/${getSectionSlug("War Doctor")}` },
-        // Modern Era Doctors (9th-15th)
-        ...SECTION_CATEGORIES['Modern Era Doctors'].map(doctor => ({
-          label: doctor,
-          href: `/collections/${getSectionSlug(doctor)}`
-        }))
-      ],
-    },
-    {
-      id: "spinoffs",
-      label: "Spin-offs",
-      icon: SparklesIcon,
-      href: "/spinoffs",
-      description: "Expanded universe shows and characters",
-      subItems: [
-        { label: "Torchwood", href: `/collections/${getSectionSlug("Torchwood and Captain Jack")}` },
-        { label: "Sarah Jane Smith", href: `/collections/${getSectionSlug("Sarah Jane Smith")}` },
-        { label: "Class", href: `/collections/${getSectionSlug("Class")}` },
-        { label: "K-9", href: `/collections/${getSectionSlug("K-9")}` },
-        { label: "UNIT", href: `/collections/${getSectionSlug("UNIT")}` },
-      ],
+      subItems: SECTION_CATEGORIES['All Doctors'].map(doctor => ({
+        label: doctor,
+        href: `/collections/${getSectionSlug(doctor)}`
+      })),
     },
   ];
 

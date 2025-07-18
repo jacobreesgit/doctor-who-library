@@ -61,10 +61,17 @@ export const ALL_APPROVED_SECTIONS = Object.values(APPROVED_SECTIONS).flat();
  * Section categories for organizational grouping
  */
 export const SECTION_CATEGORIES = {
-  'Classic Era Doctors': APPROVED_SECTIONS.CLASSIC_DOCTORS,
-  'Modern Era Doctors': APPROVED_SECTIONS.MODERN_DOCTORS,
-  'Special Doctors': APPROVED_SECTIONS.SPECIAL_DOCTORS,
-  'Spin-offs & Companions': APPROVED_SECTIONS.SPINOFFS,
-  'Villains & Monsters': APPROVED_SECTIONS.VILLAINS,
-  'Special Collections': APPROVED_SECTIONS.SPECIAL_COLLECTIONS
+  'All Doctors': [
+    // Fugitive Doctor first
+    'Fugitive Doctor',
+    // Classic Era Doctors (1st-8th)
+    ...APPROVED_SECTIONS.CLASSIC_DOCTORS,
+    // War Doctor before 9th
+    'War Doctor',
+    // Modern Era Doctors (9th-15th)
+    ...APPROVED_SECTIONS.MODERN_DOCTORS,
+    // Other special doctors
+    'Curator',
+    'Unbound Doctor'
+  ]
 } as const;

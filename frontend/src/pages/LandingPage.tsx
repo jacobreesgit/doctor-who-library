@@ -1,27 +1,30 @@
 /**
  * Landing Page Component
  * 
- * Netflix-style homepage with featured content and content rails
+ * Combined landing page with hero section and browse all collections
  * Features:
  * - Hero section with featured enriched content
- * - Content rails for different categories
- * - Enriched content prioritization
+ * - Card-based collections grid for all sections
+ * - Section-based organization (Doctors, Spin-offs, etc.)
  * - Responsive design with mobile optimization
  * - Performance optimized with React Query
  * - SEO friendly structure
  * - Real-time content updates
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { ViewColumnsIcon } from '@heroicons/react/24/outline';
 import { libraryApi, queryKeys } from '../services/api';
 import { HeroSection } from '../components/layout';
-import { ContentRail } from '../components/ui';
 import { LoadingSpinner } from '../components/common';
+import type { LibraryItemResponse } from '../types/api';
+import { SECTION_CATEGORIES } from '../constants/sections';
+import { CollectionCard } from '../components/ui';
 
 const LandingPage: React.FC = () => {
-  // Fetch enriched content for hero and rails
+  // Fetch enriched content for hero
   const { data: enrichedItems, isLoading: enrichedLoading } = useQuery({
     queryKey: queryKeys.library.enriched(),
     queryFn: () => libraryApi.getLibraryItems({ 
@@ -33,76 +36,122 @@ const LandingPage: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch modern era Doctors collection
-  const { data: modernDoctors, isLoading: modernLoading } = useQuery({
-    queryKey: queryKeys.library.modernDoctors(),
-    queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'],
-      enrichment_status: 'enriched',
-      limit: 20,
-      sortBy: 'story_number',
-      sortOrder: 'asc'
+  // Fetch all library items for collections
+  const {
+    data: allItems,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: queryKeys.library.items({
+      limit: 10000,
+      sortBy: "story_number",
+      sortOrder: "asc",
     }),
+    queryFn: () =>
+      libraryApi.getLibraryItems({
+        limit: 10000,
+        sortBy: "story_number",
+        sortOrder: "asc",
+      }),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch library sections
+  const { data: sections } = useQuery({
+    queryKey: queryKeys.library.sections(),
+    queryFn: () => libraryApi.getLibrarySections(),
     staleTime: 10 * 60 * 1000,
   });
 
-  // Fetch classic era Doctors collection
-  const { data: classicDoctors, isLoading: classicLoading } = useQuery({
-    queryKey: queryKeys.library.classicDoctors(),
-    queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'],
-      enrichment_status: 'enriched',
-      limit: 20,
-      sortBy: 'story_number',
-      sortOrder: 'asc'
-    }),
-    staleTime: 10 * 60 * 1000,
-  });
+  // Group items by section
+  const itemsBySection = useMemo(() => {
+    if (!allItems || !sections) return {};
 
-  // Fetch spin-off content
-  const { data: spinoffItems, isLoading: spinoffLoading } = useQuery({
-    queryKey: queryKeys.library.spinoffs(),
-    queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'],
-      enrichment_status: 'enriched',
-      limit: 20,
-      sortBy: 'story_number',
-      sortOrder: 'asc'
-    }),
-    staleTime: 10 * 60 * 1000,
-  });
+    const grouped: Record<string, LibraryItemResponse[]> = {};
+    
+    // Filter out undefined/null sections (sections are strings, not objects)
+    const validSections = sections.filter((s) => s && typeof s === 'string');
 
-  // Fetch special collections
-  const { data: specialCollections, isLoading: specialLoading } = useQuery({
-    queryKey: queryKeys.library.specialCollections(),
-    queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries', 'War Doctor'],
-      enrichment_status: 'enriched',
-      limit: 20,
-      sortBy: 'story_number',
-      sortOrder: 'asc'
-    }),
-    staleTime: 10 * 60 * 1000,
-  });
+    validSections.forEach((section) => {
+      grouped[section] = allItems.filter(
+        (item) => item.section_name === section
+      );
+    });
 
-  // Fetch villain collections
-  const { data: villainItems, isLoading: villainLoading } = useQuery({
-    queryKey: queryKeys.library.villains(),
-    queryFn: () => libraryApi.getLibraryItems({ 
-      sections: ['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'],
-      enrichment_status: 'enriched',
-      limit: 20,
-      sortBy: 'story_number',
-      sortOrder: 'asc'
-    }),
-    staleTime: 10 * 60 * 1000,
-  });
+    return grouped;
+  }, [allItems, sections]);
 
+  // Get section stats
+  const sectionStats = useMemo(() => {
+    if (!itemsBySection) return {};
 
-  if (enrichedLoading) {
+    const stats: Record<
+      string,
+      { total: number; enriched: number; pending: number }
+    > = {};
+
+    Object.entries(itemsBySection).forEach(([section, items]) => {
+      stats[section] = {
+        total: items.length,
+        enriched: items.filter((item) => item.enrichment_status === "enriched")
+          .length,
+        pending: items.filter((item) => item.enrichment_status === "pending")
+          .length,
+      };
+    });
+
+    return stats;
+  }, [itemsBySection]);
+
+  // Section categories for better organization
+  const sectionCategories = useMemo(() => {
+    if (!sections) return {};
+
+    const categories: Record<string, string[]> = {};
+
+    // Filter out undefined/null sections (sections are strings, not objects)
+    const validSections = sections.filter((s) => s && typeof s === 'string');
+    
+    // Use predefined categories from constants
+    Object.entries(SECTION_CATEGORIES).forEach(([categoryName, approvedSections]) => {
+      const foundSections = validSections.filter((s) => approvedSections.includes(s));
+      if (foundSections.length > 0) {
+        categories[categoryName] = foundSections;
+      }
+    });
+
+    // Add any remaining sections to "Other Collections"
+    const allCategorized = Object.values(categories).flat();
+    const remaining = validSections.filter((s) => !allCategorized.includes(s));
+    if (remaining.length > 0) {
+      categories["Other Collections"] = remaining;
+    }
+
+    // If no categories were created, just show all sections under "All Collections"
+    if (Object.keys(categories).length === 0) {
+      categories["All Collections"] = validSections;
+    }
+
+    return categories;
+  }, [sections]);
+
+  if (enrichedLoading || isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">
+          Error Loading Data
+        </h1>
+        <p className="text-gray-600">
+          Unable to load library data. Please try again.
+        </p>
       </div>
     );
   }
@@ -119,168 +168,79 @@ const LandingPage: React.FC = () => {
         />
       )}
 
+      {/* Browse All Collections Section */}
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Doctor Who Collections
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Browse the complete Doctor Who universe organized by Doctors, eras,
+            and special collections
+          </p>
+        </div>
 
+        {/* Collection Categories */}
+        <div className="space-y-12">
+          {Object.entries(sectionCategories).map(
+            ([categoryName, categorySections]) => (
+              <div key={categoryName} className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {categoryName}
+                  </h2>
+                  <ViewColumnsIcon className="h-6 w-6 text-gray-400" />
+                </div>
 
-      {/* Content Rails */}
-      <div className="space-y-12">
-        {/* Modern Era Doctors with Stories */}
-        <ContentRail
-          title="🌟 Modern Era Doctors"
-          subtitle="From the 9th Doctor to the 15th Doctor - sections and stories"
-          items={[
-            // Add section cards for modern doctors
-            ...(['9th Doctor', '10th Doctor', '11th Doctor', '12th Doctor', '13th Doctor', '14th Doctor', '15th Doctor'].map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))),
-            // Mix in actual stories
-            ...(modernDoctors?.slice(0, 15) || [])
-          ]}
-          isLoading={modernLoading}
-          viewAllLink="/doctors/modern"
-        />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {categorySections.map((section, index) => {
+                    if (!section || section.trim() === '') return null;
+                    const items = itemsBySection[section] || [];
+                    const stats = sectionStats[section] || {
+                      total: 0,
+                      enriched: 0,
+                      pending: 0,
+                    };
 
-        {/* Classic Era Doctors with Stories */}
-        <ContentRail
-          title="🎭 Classic Era Doctors"
-          subtitle="The original eight Doctors - sections and stories"
-          items={[
-            // Add section cards for classic doctors
-            ...(['1st Doctor', '2nd Doctor', '3rd Doctor', '4th Doctor', '5th Doctor', '6th Doctor', '7th Doctor', '8th Doctor'].map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))),
-            // Mix in actual stories
-            ...(classicDoctors?.slice(0, 15) || [])
-          ]}
-          isLoading={classicLoading}
-          viewAllLink="/doctors/classic"
-        />
+                    return (
+                      <CollectionCard
+                        key={`${section}-${index}`}
+                        section={section}
+                        items={items}
+                        stats={stats}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )
+          )}
+        </div>
 
-        {/* Spin-off Adventures with Sections */}
-        <ContentRail
-          title="🚀 Spin-off Adventures"
-          subtitle="Expanded universe - sections and stories"
-          items={[
-            // Add section cards for spin-offs
-            ...(['Torchwood and Captain Jack', 'Sarah Jane Smith', 'Class', 'K-9', 'UNIT'].map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))),
-            // Mix in actual stories
-            ...(spinoffItems?.slice(0, 15) || [])
-          ]}
-          isLoading={spinoffLoading}
-          viewAllLink="/spinoffs"
-        />
-
-        {/* Special Collections with Sections */}
-        <ContentRail
-          title="📚 Special Collections"
-          subtitle="Time Lord Victorious, New Earth, and more - sections and stories"
-          items={[
-            // Add section cards for special collections
-            ...(['Time Lord Victorious Chronology', 'Tales from New Earth', 'Documentaries', 'War Doctor'].map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))),
-            // Mix in actual stories
-            ...(specialCollections?.slice(0, 15) || [])
-          ]}
-          isLoading={specialLoading}
-          viewAllLink="/collections"
-        />
-
-        {/* Villain Collections with Sections */}
-        <ContentRail
-          title="👹 Villains & Monsters"
-          subtitle="Daleks, Cybermen, Masters, and more - sections and stories"
-          items={[
-            // Add section cards for villains
-            ...(['Dalek Empire & I, Davros', 'Cybermen', 'The Master', 'War Master', 'Missy'].map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))),
-            // Mix in actual stories
-            ...(villainItems?.slice(0, 15) || [])
-          ]}
-          isLoading={villainLoading}
-          viewAllLink="/collections/villains"
-        />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Ready to Explore?
-        </h2>
-        <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-          Dive into the complete Doctor Who universe with our comprehensive library
-        </p>
-        <div className="flex justify-center space-x-4">
-          <Link
-            to="/doctors"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Browse by Doctor
-          </Link>
-          <Link
-            to="/spinoffs"
-            className="bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Explore Spin-offs
-          </Link>
-          <Link
-            to="/collections"
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
-          >
-            Special Collections
-          </Link>
+        {/* Quick Actions */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Explore the Complete Library
+          </h2>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Looking for something specific? Use our search and filtering tools to
+            find exactly what you're looking for.
+          </p>
+          <div className="flex justify-center space-x-4">
+            <Link
+              to="/doctors"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Browse by Doctor
+            </Link>
+            <Link
+              to="/spinoffs"
+              className="bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Explore Spin-offs
+            </Link>
+          </div>
         </div>
       </div>
     </div>

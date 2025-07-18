@@ -27,7 +27,6 @@ const StoriesPage = lazy(() => import('./pages/StoriesPage'));
 const ExplorePage = lazy(() => import('./pages/ExplorePage'));
 const RecentPage = lazy(() => import('./pages/RecentPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
-const CollectionsPage = lazy(() => import('./pages/CollectionsPage'));
 const CollectionDetailPage = lazy(() => import('./pages/CollectionDetailPage'));
 const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
@@ -65,7 +64,6 @@ function App() {
                     <Route path="/explore/*" element={<ExplorePage />} />
                     <Route path="/recent/*" element={<RecentPage />} />
                     <Route path="/dev" element={<HomePage />} />
-                    <Route path="/collections" element={<CollectionsPage />} />
                     <Route path="/collections/:sectionName" element={<CollectionDetailPage />} />
                     <Route path="/item/:itemId" element={<ItemDetailPage />} />
                     <Route path="/auth/callback" element={<AuthCallbackPage />} />

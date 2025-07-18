@@ -194,7 +194,7 @@ const CollectionDetailPage: React.FC = () => {
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2 text-sm text-gray-500">
         <Link
-          to="/collections"
+          to="/"
           className="hover:text-blue-600 transition-colors"
         >
           Collections
@@ -236,7 +236,7 @@ const CollectionDetailPage: React.FC = () => {
             </div>
           </div>
           <Link
-            to="/collections"
+            to="/"
             className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors"
           >
             <ArrowLeftIcon className="h-4 w-4" />
