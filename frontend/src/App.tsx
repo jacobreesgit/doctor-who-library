@@ -15,8 +15,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HeaderNavigation from './components/HeaderNavigation';
-import Footer from './components/Footer';
+import { HeaderNavigation } from './components/layout';
+import { Footer } from './components/layout';
 import LandingPage from './pages/LandingPage';
 import StoriesPage from './pages/StoriesPage';
 import ExplorePage from './pages/ExplorePage';
@@ -29,7 +29,7 @@ import ApiDocumentationPage from './pages/ApiDocumentationPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import FavoritesPage from './pages/FavoritesPage';
 import WatchHistoryPage from './pages/WatchHistoryPage';
-import ErrorBoundary from './components/ErrorBoundary';
+import { ErrorBoundary } from './components/common';
 import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 

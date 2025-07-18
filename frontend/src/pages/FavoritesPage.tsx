@@ -11,8 +11,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useUserFeatures } from '../hooks/useUserFeatures';
 import { useQuery } from '@tanstack/react-query';
 import { libraryApi } from '../services/api';
-import ContentCard from '../components/ContentCard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { ContentCard } from '../components/ui';
+import { LoadingSpinner } from '../components/common';
 
 const FavoritesPage: React.FC = () => {
   const { user } = useAuth();
@@ -99,7 +99,7 @@ const FavoritesPage: React.FC = () => {
             key={item.id}
             item={item}
             variant="default"
-            showEnrichmentStatus={false}
+            variant="default"
           />
         ))}
       </div>

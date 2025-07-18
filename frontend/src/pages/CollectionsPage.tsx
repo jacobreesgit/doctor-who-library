@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ViewColumnsIcon } from "@heroicons/react/24/outline";
 import { libraryApi, queryKeys } from "../services/api";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { LoadingSpinner } from "../components/common";
 import type { LibraryItemResponse } from "../types/api";
 import { SECTION_CATEGORIES } from "../constants/sections";
 import { getSectionEmoji, getSectionSlug } from "../utils/sections";

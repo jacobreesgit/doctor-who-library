@@ -5,9 +5,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { libraryApi, queryKeys } from '../services/api';
-import EnrichmentStats from '../components/EnrichmentStats';
-import LibraryGrid from '../components/LibraryGrid';
-import EnrichmentManager from '../components/EnrichmentManager';
+import { EnrichmentStats, EnrichmentManager } from '../components/enrichment';
+import { LibraryGrid } from '../components/ui';
 import type { ApiError, EnrichmentStatus } from '../types/api';
 
 const HomePage: React.FC = () => {

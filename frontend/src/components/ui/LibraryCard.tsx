@@ -3,11 +3,11 @@
  */
 
 import React from 'react';
-import type { LibraryItemResponse } from '../types/api';
+import type { LibraryItemResponse } from '../../types/api';
 import WikiSummary from './WikiSummary';
-import EnrichmentBadge from './EnrichmentBadge';
+import { EnrichmentBadge } from '../enrichment';
 import WikiImage from './WikiImage';
-import EnrichmentManager from './EnrichmentManager';
+import { EnrichmentManager } from '../enrichment';
 
 interface LibraryCardProps {
   item: LibraryItemResponse;

@@ -1,0 +1,9 @@
+export { default as AllStoriesView } from './AllStoriesView';
+export { default as CollectionsView } from './CollectionsView';
+export { default as ContinueWatchingView } from './ContinueWatchingView';
+export { default as DoctorEraView } from './DoctorEraView';
+export { default as FavoritesView } from './FavoritesView';
+export { default as FeaturedView } from './FeaturedView';
+export { default as FormatView } from './FormatView';
+export { default as NewAdditionsView } from './NewAdditionsView';
+export { default as RecentlyAddedView } from './RecentlyAddedView';

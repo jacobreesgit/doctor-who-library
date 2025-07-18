@@ -4,9 +4,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import FeaturedView from '../components/FeaturedView';
-import CollectionsView from '../components/CollectionsView';
-import NewAdditionsView from '../components/NewAdditionsView';
+import { FeaturedView, CollectionsView, NewAdditionsView } from '../components/views';
 
 const ExplorePage: React.FC = () => {
   return (

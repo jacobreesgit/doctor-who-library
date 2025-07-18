@@ -15,14 +15,10 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { 
-  ChevronRightIcon
-} from '@heroicons/react/24/outline';
 import { libraryApi, queryKeys } from '../services/api';
-import HeroSection from '../components/HeroSection';
-import ContentRail from '../components/ContentRail';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { getSectionEmoji, getSectionSlug } from '../utils/sections';
+import { HeroSection } from '../components/layout';
+import { ContentRail } from '../components/ui';
+import { LoadingSpinner } from '../components/common';
 
 const LandingPage: React.FC = () => {
   // Fetch enriched content for hero and rails
@@ -164,8 +160,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -181,8 +177,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -207,8 +203,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -233,8 +229,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -259,8 +255,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -285,8 +281,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
@@ -311,8 +307,8 @@ const LandingPage: React.FC = () => {
               section_name: section,
               enrichment_status: 'enriched' as const,
               enrichment_confidence: 1,
-              wiki_image_url: null,
-              wiki_summary: null,
+              wiki_image_url: undefined,
+              wiki_summary: undefined,
               content_type: 'Section',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),

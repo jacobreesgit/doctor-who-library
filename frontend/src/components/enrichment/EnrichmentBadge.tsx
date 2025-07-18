@@ -13,7 +13,7 @@
  */
 
 import React, { useState } from 'react';
-import type { EnrichmentStatus } from '../types/api';
+import type { EnrichmentStatus } from '../../types/api';
 
 interface EnrichmentBadgeProps {
   status: EnrichmentStatus;

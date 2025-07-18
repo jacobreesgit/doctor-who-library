@@ -26,8 +26,8 @@ import {
   XMarkIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { getSectionSlug } from "../utils/sections";
-import { useAuth } from "../contexts/AuthContext";
+import { getSectionSlug } from "../../utils/sections";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderNavigationProps {
   className?: string;

@@ -11,8 +11,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useUserFeatures } from '../hooks/useUserFeatures';
 import { useQuery } from '@tanstack/react-query';
 import { libraryApi } from '../services/api';
-import ContentCard from '../components/ContentCard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { ContentCard } from '../components/ui';
+import { LoadingSpinner } from '../components/common';
 
 const WatchHistoryPage: React.FC = () => {
   const { user } = useAuth();
@@ -117,7 +117,7 @@ const WatchHistoryPage: React.FC = () => {
                 <ContentCard
                   item={item}
                   variant="compact"
-                  showEnrichmentStatus={false}
+                  variant="compact"
                   className="w-48"
                 />
               </div>

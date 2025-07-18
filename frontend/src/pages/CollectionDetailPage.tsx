@@ -23,8 +23,8 @@ import {
   AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { libraryApi, queryKeys } from "../services/api";
-import ContentCard from "../components/ContentCard";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { ContentCard } from "../components/ui";
+import { LoadingSpinner } from "../components/common";
 import type { EnrichmentStatus } from "../types/api";
 import { getSectionEmoji } from "../utils/sections";
 
@@ -82,7 +82,7 @@ const CollectionDetailPage: React.FC = () => {
   const filteredAndSortedItems = useMemo(() => {
     if (!allItems) return [];
 
-    let filtered = allItems.filter((item) => {
+    const filtered = allItems.filter((item) => {
       const matchesContentType =
         !filters.contentType || item.content_type === filters.contentType;
       const matchesEnrichmentStatus =
@@ -105,8 +105,8 @@ const CollectionDetailPage: React.FC = () => {
 
     // Sort filtered items
     filtered.sort((a, b) => {
-      let aValue: any = a[sortField] || "";
-      let bValue: any = b[sortField] || "";
+      let aValue: string | number = a[sortField] || "";
+      let bValue: string | number = b[sortField] || "";
 
       if (sortField === "enrichment_confidence") {
         aValue = a.enrichment_confidence || 0;
@@ -344,7 +344,6 @@ const CollectionDetailPage: React.FC = () => {
             key={item.id}
             item={item}
             variant="default"
-            showEnrichmentStatus={true}
           />
         ))}
       </div>

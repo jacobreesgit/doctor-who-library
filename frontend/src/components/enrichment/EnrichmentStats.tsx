@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import type { LibraryStatsResponse, EnrichmentStatus } from '../types/api';
+import type { LibraryStatsResponse, EnrichmentStatus } from '../../types/api';
 
 interface EnrichmentStatsProps {
   stats?: LibraryStatsResponse;

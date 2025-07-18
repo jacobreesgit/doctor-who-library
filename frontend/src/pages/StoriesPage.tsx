@@ -4,9 +4,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import DoctorEraView from '../components/DoctorEraView';
-import FormatView from '../components/FormatView';
-import AllStoriesView from '../components/AllStoriesView';
+import { DoctorEraView, FormatView, AllStoriesView } from '../components/views';
 
 const StoriesPage: React.FC = () => {
   return (

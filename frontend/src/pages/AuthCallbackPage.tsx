@@ -7,7 +7,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { LoadingSpinner } from '../components/common';
 
 const AuthCallbackPage: React.FC = () => {
   const navigate = useNavigate();

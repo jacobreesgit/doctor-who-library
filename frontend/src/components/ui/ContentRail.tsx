@@ -6,8 +6,8 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import ContentCard from './ContentCard';
-import LoadingSpinner from './LoadingSpinner';
-import type { LibraryItem } from '../types/api';
+import { LoadingSpinner } from '../common';
+import type { LibraryItem } from '../../types/api';
 
 interface ContentRailProps {
   title: string;
@@ -104,7 +104,6 @@ const ContentRail: React.FC<ContentRailProps> = ({
                 <ContentCard 
                   item={item} 
                   variant="compact"
-                  showEnrichmentStatus={true}
                 />
               </div>
             ))}

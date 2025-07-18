@@ -29,9 +29,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import { libraryApi, queryKeys } from '../services/api';
-import ContentCard from '../components/ContentCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import EnrichmentBadge from '../components/EnrichmentBadge';
+import { ContentCard } from '../components/ui';
+import { LoadingSpinner } from '../components/common';
+import { EnrichmentBadge } from '../components/enrichment';
 import { getSectionEmoji } from '../utils/sections';
 
 const ItemDetailPage: React.FC = () => {
@@ -305,7 +305,7 @@ const ItemDetailPage: React.FC = () => {
                 key={relatedItem.id}
                 item={relatedItem}
                 variant="compact"
-                showEnrichmentStatus={false}
+                variant="compact"
               />
             ))}
           </div>

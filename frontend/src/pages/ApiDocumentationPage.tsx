@@ -58,7 +58,7 @@ const ApiDocumentationPage: React.FC = () => {
     </div>
   );
 
-  const SectionHeader: React.FC<{ id: string; title: string; icon: React.ComponentType<any> }> = ({ id, title, icon: Icon }) => (
+  const SectionHeader: React.FC<{ id: string; title: string; icon: React.ComponentType<{ className?: string }> }> = ({ id, title, icon: Icon }) => (
     <div
       className="flex items-center space-x-3 cursor-pointer py-2 hover:bg-gray-50 rounded-lg px-2"
       onClick={() => toggleSection(id)}
@@ -102,7 +102,6 @@ const ApiDocumentationPage: React.FC = () => {
     </div>
   );
 
-  const allSections = Object.values(APPROVED_SECTIONS).flat();
 
   return (
     <div className="api-documentation-page max-w-4xl mx-auto space-y-8">

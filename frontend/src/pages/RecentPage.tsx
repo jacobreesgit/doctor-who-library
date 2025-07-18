@@ -4,9 +4,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import ContinueWatchingView from '../components/ContinueWatchingView';
-import RecentlyAddedView from '../components/RecentlyAddedView';
-import FavoritesView from '../components/FavoritesView';
+import { ContinueWatchingView, RecentlyAddedView, FavoritesView } from '../components/views';
 
 const RecentPage: React.FC = () => {
   return (

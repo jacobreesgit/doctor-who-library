@@ -8,10 +8,9 @@ import {
   ClockIcon,
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
-import type { LibraryItem } from '../types/api';
-import { getSectionEmoji } from '../utils/sections';
-import FavoriteButton from './FavoriteButton';
-import WatchedButton from './WatchedButton';
+import type { LibraryItem } from '../../types/api';
+import { getSectionEmoji } from '../../utils/sections';
+import { FavoriteButton, WatchedButton } from '../common';
 
 interface ContentCardProps {
   item: LibraryItem;

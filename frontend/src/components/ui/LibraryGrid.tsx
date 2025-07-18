@@ -4,10 +4,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { libraryApi, queryKeys } from '../services/api';
-import type { LibraryItemResponse, ApiError, EnrichmentStatus } from '../types/api';
+import { libraryApi, queryKeys } from '../../services/api';
+import type { LibraryItemResponse, ApiError, EnrichmentStatus } from '../../types/api';
 import LibraryCard from './LibraryCard';
-import LoadingSpinner from './LoadingSpinner';
+import { LoadingSpinner } from '../common';
 
 interface LibraryGridProps {
   itemsPerPage?: number;

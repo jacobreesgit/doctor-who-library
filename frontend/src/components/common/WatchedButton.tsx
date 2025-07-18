@@ -7,8 +7,8 @@
 import React from 'react';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
-import { useAuth } from '../contexts/AuthContext';
-import { useUserFeatures } from '../hooks/useUserFeatures';
+import { useAuth } from '../../contexts/AuthContext';
+import { useUserFeatures } from '../../hooks/useUserFeatures';
 
 interface WatchedButtonProps {
   itemId: string;

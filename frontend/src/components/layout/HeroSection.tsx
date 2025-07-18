@@ -11,7 +11,7 @@ import {
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/solid';
 import { HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline';
-import type { LibraryItem } from '../types/api';
+import type { LibraryItem } from '../../types/api';
 
 interface HeroSectionProps {
   item: LibraryItem;
