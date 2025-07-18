@@ -14,8 +14,8 @@
  * - Outside click handling for dropdown menus
  */
 
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpenIcon,
   SparklesIcon,
@@ -27,33 +27,62 @@ import {
 } from "@heroicons/react/24/outline";
 import { getSectionSlug } from "../../utils/sections";
 import { useAuth } from "../../contexts/AuthContext";
+import { useSearch } from "../../hooks/useSearch";
+import { SECTION_CATEGORIES } from "../../constants/sections";
 
 interface HeaderNavigationProps {
   className?: string;
+}
+
+interface SubItem {
+  label: string;
+  href: string;
+}
+
+interface MainTab {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  description: string;
+  subItems: SubItem[];
 }
 
 const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   className = "",
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, signInWithGoogle, signOut, loading } = useAuth();
+  const searchRef = useRef<HTMLInputElement>(null);
+  
+  // Search functionality
+  const {
+    query,
+    results,
+    isLoading,
+    hasResults,
+    selectedIndex,
+    setQuery,
+    clearSearch,
+    selectNext,
+    selectPrevious,
+    selectResult,
+    getSelectedResult
+  } = useSearch();
+  
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
-  const mainTabs = [
+  const mainTabs: MainTab[] = [
     {
       id: "browse",
       label: "Browse All",
       icon: BookOpenIcon,
       href: "/collections",
       description: "Browse all Doctor Who content",
-      subItems: [
-        { label: "All Collections", href: "/collections" },
-        { label: "TV Stories", href: "/collections?type=TV" },
-        { label: "Audio Stories", href: "/collections?type=Audio" },
-        { label: "Comic Stories", href: "/collections?type=Comic" },
-        { label: "Documentaries", href: `/collections/${getSectionSlug("Documentaries")}` },
-      ],
+      subItems: [],
     },
     {
       id: "doctors",
@@ -62,12 +91,20 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
       href: "/doctors",
       description: "Browse by Doctor era and incarnation",
       subItems: [
-        { label: "1st Doctor", href: `/collections/${getSectionSlug("1st Doctor")}` },
-        { label: "4th Doctor", href: `/collections/${getSectionSlug("4th Doctor")}` },
-        { label: "8th Doctor", href: `/collections/${getSectionSlug("8th Doctor")}` },
-        { label: "10th Doctor", href: `/collections/${getSectionSlug("10th Doctor")}` },
-        { label: "11th Doctor", href: `/collections/${getSectionSlug("11th Doctor")}` },
+        // Fugitive Doctor first
+        { label: "Fugitive Doctor", href: `/collections/${getSectionSlug("Fugitive Doctor")}` },
+        // Classic Era Doctors (1st-8th)
+        ...SECTION_CATEGORIES['Classic Era Doctors'].map(doctor => ({
+          label: doctor,
+          href: `/collections/${getSectionSlug(doctor)}`
+        })),
+        // War Doctor before 9th
         { label: "War Doctor", href: `/collections/${getSectionSlug("War Doctor")}` },
+        // Modern Era Doctors (9th-15th)
+        ...SECTION_CATEGORIES['Modern Era Doctors'].map(doctor => ({
+          label: doctor,
+          href: `/collections/${getSectionSlug(doctor)}`
+        }))
       ],
     },
     {
@@ -99,12 +136,78 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
     setActiveDropdown(null); // Close any open dropdowns when toggling mobile menu
+    setShowSearchResults(false); // Close search results
   };
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
+    setShowSearchResults(false);
   };
+  
+  // Search handlers
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    setShowSearchResults(value.length > 0);
+  };
+  
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!showSearchResults && query.length > 0) {
+        setShowSearchResults(true);
+      } else {
+        selectNext();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectPrevious();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const selectedResult = getSelectedResult();
+      if (selectedResult) {
+        navigate(`/item/${selectedResult.id}`);
+        clearSearch();
+        setShowSearchResults(false);
+        searchRef.current?.blur();
+      }
+    } else if (e.key === 'Escape') {
+      setShowSearchResults(false);
+      clearSearch();
+      searchRef.current?.blur();
+    }
+  };
+  
+  const handleSearchResultClick = (result: typeof results[0]) => {
+    navigate(`/item/${result.id}`);
+    clearSearch();
+    setShowSearchResults(false);
+    searchRef.current?.blur();
+  };
+  
+  const handleSearchFocus = () => {
+    if (query.length > 0) {
+      setShowSearchResults(true);
+    }
+  };
+  
+  const handleSearchBlur = () => {
+    // Delay hiding results to allow for clicks
+    setTimeout(() => setShowSearchResults(false), 200);
+  };
+  
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className={`header-navigation bg-blue-600 text-white shadow-lg ${className}`}>
@@ -128,22 +231,36 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
 
                 return (
                   <div key={tab.id} className="relative">
-                    <button
-                      onClick={() => handleDropdownToggle(tab.id)}
-                      className={`flex items-center space-x-2 py-2 px-3 text-sm font-medium transition-colors rounded-md ${
-                        active
-                          ? "bg-blue-500 text-white"
-                          : "text-blue-200 hover:text-white hover:bg-blue-500"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{tab.label}</span>
-                      <ChevronDownIcon className="h-3 w-3" />
-                    </button>
+                    {tab.subItems.length > 0 ? (
+                      <button
+                        onClick={() => handleDropdownToggle(tab.id)}
+                        className={`flex items-center space-x-2 py-2 px-3 text-sm font-medium transition-colors rounded-md ${
+                          active
+                            ? "bg-blue-500 text-white"
+                            : "text-blue-200 hover:text-white hover:bg-blue-500"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{tab.label}</span>
+                        <ChevronDownIcon className="h-3 w-3" />
+                      </button>
+                    ) : (
+                      <Link
+                        to={tab.href}
+                        className={`flex items-center space-x-2 py-2 px-3 text-sm font-medium transition-colors rounded-md ${
+                          active
+                            ? "bg-blue-500 text-white"
+                            : "text-blue-200 hover:text-white hover:bg-blue-500"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{tab.label}</span>
+                      </Link>
+                    )}
 
                     {/* Dropdown Menu */}
                     {activeDropdown === tab.id && (
-                      <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50 max-h-96 overflow-y-auto">
                         <div className="py-2">
                           <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
                             {tab.description}
@@ -170,13 +287,74 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
 
             {/* Desktop Search and Auth */}
             <div className="flex items-center space-x-4">
-              <div className="relative">
+              <div className="relative" ref={searchRef}>
                 <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search library..."
+                  value={query}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
                   className="pl-9 pr-4 py-1.5 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48 text-gray-900 text-sm"
                 />
+                
+                {/* Search Results Dropdown */}
+                {showSearchResults && (query.length > 0) && (
+                  <div className="absolute top-full left-0 mt-1 w-96 bg-white rounded-md shadow-lg border border-gray-200 z-50 max-h-96 overflow-y-auto">
+                    {isLoading ? (
+                      <div className="p-4 text-center text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        Searching...
+                      </div>
+                    ) : hasResults ? (
+                      <div className="py-2">
+                        <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide border-b border-gray-100">
+                          Search Results
+                        </div>
+                        {results.map((result, index) => (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSearchResultClick(result)}
+                            onMouseEnter={() => selectResult(index)}
+                            className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0 ${
+                              index === selectedIndex ? 'bg-blue-50' : ''
+                            }`}
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {result.title || result.story_title || result.episode_title}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {result.content_type || 'Unknown'} • {result.section_name || 'Unknown Section'}
+                                </p>
+                                {result.doctor && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    {result.doctor}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : query.length >= 2 ? (
+                      <div className="p-4 text-center text-gray-500">
+                        <MagnifyingGlassIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        No results found for "{query}"
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center text-gray-500">
+                        Type at least 2 characters to search
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               {/* Authentication */}
@@ -205,7 +383,7 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
                   
                   {/* User Dropdown */}
                   {activeDropdown === 'user' && (
-                    <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                    <div className="absolute top-full right-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                       <div className="py-2">
                         <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
                           {user.email}
@@ -274,8 +452,69 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
                 <input
                   type="text"
                   placeholder="Search library..."
+                  value={query}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
                   className="w-full pl-9 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm"
                 />
+                
+                {/* Mobile Search Results */}
+                {showSearchResults && (query.length > 0) && (
+                  <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 z-50 max-h-64 overflow-y-auto">
+                    {isLoading ? (
+                      <div className="p-4 text-center text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        Searching...
+                      </div>
+                    ) : hasResults ? (
+                      <div className="py-2">
+                        <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wide border-b border-gray-100">
+                          Search Results
+                        </div>
+                        {results.map((result, index) => (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSearchResultClick(result)}
+                            onMouseEnter={() => selectResult(index)}
+                            className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0 ${
+                              index === selectedIndex ? 'bg-blue-50' : ''
+                            }`}
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {result.title || result.story_title || result.episode_title}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate">
+                                  {result.content_type || 'Unknown'} • {result.section_name || 'Unknown Section'}
+                                </p>
+                                {result.doctor && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    {result.doctor}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : query.length >= 2 ? (
+                      <div className="p-4 text-center text-gray-500">
+                        <MagnifyingGlassIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        No results found for "{query}"
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center text-gray-500">
+                        Type at least 2 characters to search
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -287,28 +526,45 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
 
                 return (
                   <div key={tab.id}>
-                    <button
-                      onClick={() => handleDropdownToggle(tab.id)}
-                      className={`w-full flex items-center justify-between py-3 px-4 text-sm font-medium transition-colors rounded-md ${
-                        active
-                          ? "bg-blue-500 text-white"
-                          : "text-blue-200 hover:text-white hover:bg-blue-500"
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <Icon className="h-4 w-4" />
-                        <span>{tab.label}</span>
-                      </div>
-                      <ChevronDownIcon 
-                        className={`h-4 w-4 transition-transform ${
-                          activeDropdown === tab.id ? 'rotate-180' : ''
-                        }`} 
-                      />
-                    </button>
+                    {tab.subItems.length > 0 ? (
+                      <button
+                        onClick={() => handleDropdownToggle(tab.id)}
+                        className={`w-full flex items-center justify-between py-3 px-4 text-sm font-medium transition-colors rounded-md ${
+                          active
+                            ? "bg-blue-500 text-white"
+                            : "text-blue-200 hover:text-white hover:bg-blue-500"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Icon className="h-4 w-4" />
+                          <span>{tab.label}</span>
+                        </div>
+                        <ChevronDownIcon 
+                          className={`h-4 w-4 transition-transform ${
+                            activeDropdown === tab.id ? 'rotate-180' : ''
+                          }`} 
+                        />
+                      </button>
+                    ) : (
+                      <Link
+                        to={tab.href}
+                        onClick={closeMobileMenu}
+                        className={`w-full flex items-center py-3 px-4 text-sm font-medium transition-colors rounded-md ${
+                          active
+                            ? "bg-blue-500 text-white"
+                            : "text-blue-200 hover:text-white hover:bg-blue-500"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Icon className="h-4 w-4" />
+                          <span>{tab.label}</span>
+                        </div>
+                      </Link>
+                    )}
 
                     {/* Mobile Dropdown */}
                     {activeDropdown === tab.id && (
-                      <div className="mt-2 ml-4 space-y-1">
+                      <div className="mt-2 ml-4 space-y-1 max-h-64 overflow-y-auto">
                         <div className="px-4 py-2 text-xs font-medium text-blue-300 uppercase tracking-wide">
                           {tab.description}
                         </div>
@@ -399,6 +655,7 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
           onClick={() => {
             setActiveDropdown(null);
             setMobileMenuOpen(false);
+            setShowSearchResults(false);
           }}
         />
       )}

@@ -153,4 +153,11 @@ export const queryKeys = {
   },
 } as const;
 
+// Helper function for search hook
+export const searchLibraryItems = async (query: string, limit: number = 8): Promise<LibraryItemResponse[]> => {
+  const searchParams: LibrarySearchQuery = { q: query, limit };
+  const response = await libraryApi.searchLibrary(searchParams);
+  return response.results;
+};
+
 export default api;
