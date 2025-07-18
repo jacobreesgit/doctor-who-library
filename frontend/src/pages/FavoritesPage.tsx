@@ -99,7 +99,6 @@ const FavoritesPage: React.FC = () => {
             key={item.id}
             item={item}
             variant="default"
-            variant="default"
           />
         ))}
       </div>

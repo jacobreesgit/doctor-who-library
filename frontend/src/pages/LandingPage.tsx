@@ -98,30 +98,6 @@ const LandingPage: React.FC = () => {
     staleTime: 10 * 60 * 1000,
   });
 
-  // Fetch sections data
-  const { data: sections, isLoading: sectionsLoading } = useQuery({
-    queryKey: queryKeys.library.sections(),
-    queryFn: () => libraryApi.getLibrarySections(),
-    staleTime: 30 * 60 * 1000, // 30 minutes since sections rarely change
-  });
-
-  // Get sample stories for each major section
-  const { data: sampleStories, isLoading: storiesLoading } = useQuery({
-    queryKey: queryKeys.library.sampleStories(),
-    queryFn: async () => {
-      const samples = await Promise.all([
-        libraryApi.getLibraryItems({ section: '8th Doctor', limit: 5 }),
-        libraryApi.getLibraryItems({ section: 'Torchwood and Captain Jack', limit: 5 }),
-        libraryApi.getLibraryItems({ section: 'Dalek Empire & I, Davros', limit: 5 }),
-      ]);
-      return {
-        eighthDoctor: samples[0],
-        torchwood: samples[1],
-        daleks: samples[2]
-      };
-    },
-    staleTime: 10 * 60 * 1000,
-  });
 
   if (enrichedLoading) {
     return (
@@ -147,49 +123,6 @@ const LandingPage: React.FC = () => {
 
       {/* Content Rails */}
       <div className="space-y-12">
-        {/* Sections, Stories & Serials Mix */}
-        <ContentRail
-          title="📚 Sections"
-          subtitle="Browse by Doctor era and theme"
-          items={[
-            // Convert sections to content cards
-            ...(sections?.slice(0, 8).map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            })) || []),
-            // Mix in some featured stories
-            ...(sampleStories?.eighthDoctor?.slice(0, 4) || []),
-            ...(sampleStories?.torchwood?.slice(0, 4) || []),
-            // Add more sections
-            ...(sections?.slice(8, 16).map(section => ({
-              id: section,
-              title: section,
-              display_title: section,
-              section_name: section,
-              enrichment_status: 'enriched' as const,
-              enrichment_confidence: 1,
-              wiki_image_url: undefined,
-              wiki_summary: undefined,
-              content_type: 'Section',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            })) || []),
-            // Mix in Dalek stories
-            ...(sampleStories?.daleks?.slice(0, 4) || []),
-          ]}
-          isLoading={sectionsLoading || storiesLoading}
-          viewAllLink="/collections"
-        />
-
         {/* Modern Era Doctors with Stories */}
         <ContentRail
           title="🌟 Modern Era Doctors"

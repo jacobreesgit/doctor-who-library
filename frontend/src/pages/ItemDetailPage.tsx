@@ -305,7 +305,6 @@ const ItemDetailPage: React.FC = () => {
                 key={relatedItem.id}
                 item={relatedItem}
                 variant="compact"
-                variant="compact"
               />
             ))}
           </div>

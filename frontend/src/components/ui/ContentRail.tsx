@@ -96,7 +96,7 @@ const ContentRail: React.FC<ContentRailProps> = ({
           {/* Scrollable Container */}
           <div
             ref={scrollContainerRef}
-            className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4"
+            className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4 min-h-[280px]"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {items.map((item) => (
@@ -104,6 +104,7 @@ const ContentRail: React.FC<ContentRailProps> = ({
                 <ContentCard 
                   item={item} 
                   variant="compact"
+                  className="w-full h-full"
                 />
               </div>
             ))}

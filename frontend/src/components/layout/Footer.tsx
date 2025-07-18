@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -23,12 +22,6 @@ const Footer: React.FC = () => {
 
           {/* Right side - Links */}
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-            <Link
-              to="/api-docs"
-              className="text-gray-300 hover:text-white text-sm font-medium transition-colors"
-            >
-              API Documentation
-            </Link>
             <span className="text-gray-500 text-sm">
               Powered by TARDIS Wiki
             </span>

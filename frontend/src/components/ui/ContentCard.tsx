@@ -59,7 +59,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
 
   const cardClasses = `
     group relative bg-white rounded-lg shadow-sm border border-gray-200 
-    hover:shadow-md transition-all duration-200 overflow-hidden
+    hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col
     ${isEnriched ? 'hover:shadow-lg hover:border-blue-300' : 'hover:border-gray-300'}
     ${className}
   `;
@@ -110,7 +110,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col">
         {/* Title */}
         <h3 className={`font-semibold mb-2 line-clamp-2 ${isEnriched ? 'text-gray-900' : 'text-gray-700'}`}>
           {item.title}
@@ -142,6 +142,9 @@ const ContentCard: React.FC<ContentCardProps> = ({
             {item.wiki_summary}
           </p>
         )}
+
+        {/* Spacer to push content to bottom */}
+        <div className="flex-1"></div>
 
         {/* Enrichment Status for non-enriched items */}
         {!isEnriched && variant !== 'compact' && (

@@ -114,7 +114,7 @@ const CollectionDetailPage: React.FC = () => {
       } else if (sortField === "story_number") {
         aValue = parseInt(a.story_number || "0");
         bValue = parseInt(b.story_number || "0");
-      } else if (typeof aValue === "string") {
+      } else if (typeof aValue === "string" && typeof bValue === "string") {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }

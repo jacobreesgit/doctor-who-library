@@ -117,7 +117,6 @@ const WatchHistoryPage: React.FC = () => {
                 <ContentCard
                   item={item}
                   variant="compact"
-                  variant="compact"
                   className="w-48"
                 />
               </div>

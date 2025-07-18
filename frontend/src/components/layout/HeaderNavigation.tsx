@@ -19,7 +19,6 @@ import { Link, useLocation } from "react-router-dom";
 import {
   BookOpenIcon,
   SparklesIcon,
-  ClockIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
   Bars3Icon,
@@ -83,24 +82,6 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
         { label: "Class", href: `/collections/${getSectionSlug("Class")}` },
         { label: "K-9", href: `/collections/${getSectionSlug("K-9")}` },
         { label: "UNIT", href: `/collections/${getSectionSlug("UNIT")}` },
-      ],
-    },
-    {
-      id: "collections",
-      label: "Collections",
-      icon: ClockIcon,
-      href: "/collections",
-      description: "Special collections and themed content",
-      subItems: [
-        {
-          label: "Time Lord Victorious",
-          href: `/collections/${getSectionSlug("Time Lord Victorious Chronology")}`,
-        },
-        { label: "Tales from New Earth", href: `/collections/${getSectionSlug("Tales from New Earth")}` },
-        { label: "Documentaries", href: `/collections/${getSectionSlug("Documentaries")}` },
-        { label: "Daleks", href: `/collections/${getSectionSlug("Dalek Empire & I, Davros")}` },
-        { label: "Cybermen", href: `/collections/${getSectionSlug("Cybermen")}` },
-        { label: "The Master", href: `/collections/${getSectionSlug("The Master")}` },
       ],
     },
   ];
