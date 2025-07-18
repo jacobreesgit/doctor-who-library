@@ -1,13 +1,13 @@
 """API routes for enrichment operations."""
 
-from typing import Dict, Any, Optional
+from typing import Any
 from uuid import UUID
+
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException, Query
-from dependency_injector.wiring import inject, Provide
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from doctor_who_library.application.services.enrichment_service import EnrichmentService
-from doctor_who_library.domain.value_objects.enrichment_status import EnrichmentStatus
 from doctor_who_library.shared.config.container import Container
 from doctor_who_library.shared.exceptions.application import ServiceException
 
@@ -15,7 +15,7 @@ from doctor_who_library.shared.exceptions.application import ServiceException
 # Response models
 class EnrichmentStatsResponse(BaseModel):
     """Response model for enrichment statistics."""
-    
+
     pending: int
     enriched: int
     failed: int
@@ -25,7 +25,7 @@ class EnrichmentStatsResponse(BaseModel):
 
 class EnrichmentResultResponse(BaseModel):
     """Response model for enrichment results."""
-    
+
     processed: int
     enriched: int
     failed: int
@@ -35,7 +35,7 @@ class EnrichmentResultResponse(BaseModel):
 
 class EnrichmentResetResponse(BaseModel):
     """Response model for enrichment reset."""
-    
+
     items_reset: int
     message: str
 
@@ -54,16 +54,17 @@ async def get_enrichment_stats(
         stats = await service.get_enrichment_stats()
         return EnrichmentStatsResponse(**stats)
     except ServiceException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
 @router.post("/run", response_model=EnrichmentResultResponse)
 @inject
 async def run_enrichment(
-    batch_size: Optional[int] = Query(None, ge=1, le=100, description="Batch size"),
-    max_items: Optional[int] = Query(None, ge=1, le=10000, description="Maximum items to process"),
+    batch_size: int | None = Query(None, ge=1, le=100, description="Batch size"),
+    max_items: int
+    | None = Query(None, ge=1, le=10000, description="Maximum items to process"),
     service: EnrichmentService = Depends(Provide[Container.enrichment_service]),
 ) -> EnrichmentResultResponse:
     """Run enrichment on pending items."""
@@ -74,9 +75,9 @@ async def run_enrichment(
         )
         return EnrichmentResultResponse(**result)
     except ServiceException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
 @router.post("/items/{item_id}/enrich")
@@ -84,7 +85,7 @@ async def run_enrichment(
 async def enrich_single_item(
     item_id: UUID,
     service: EnrichmentService = Depends(Provide[Container.enrichment_service]),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Enrich a single library item."""
     try:
         item = await service.enrich_single_item(str(item_id))
@@ -97,9 +98,9 @@ async def enrich_single_item(
             "message": f"Item enriched with status: {item.enrichment_status.value}",
         }
     except ServiceException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
 @router.post("/reset", response_model=EnrichmentResetResponse)
@@ -115,9 +116,9 @@ async def reset_enrichment(
             message=f"Reset enrichment status for {items_reset} items",
         )
     except ServiceException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
 @router.post("/items/{item_id}/reset", response_model=EnrichmentResetResponse)
@@ -131,12 +132,12 @@ async def reset_item_enrichment(
         affected_rows = await service.reset_single_item_enrichment(str(item_id))
         if affected_rows == 0:
             raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
-        
+
         return EnrichmentResetResponse(
             items_reset=affected_rows,
             message=f"Reset enrichment status for item {item_id}",
         )
     except ServiceException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from e

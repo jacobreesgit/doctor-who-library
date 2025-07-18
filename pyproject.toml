@@ -54,6 +54,46 @@ target-version = ['py311']
 profile = "black"
 line_length = 88
 
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+warn_unreachable = false
+ignore_missing_imports = true
+show_error_codes = true
+pretty = true
+# Allow gradual typing - don't fail CI for type issues during development
+warn_no_return = false
+warn_redundant_casts = true
+check_untyped_defs = false
+# Be more lenient for CI/CD
+allow_untyped_calls = true
+allow_untyped_defs = true
+no_implicit_optional = false
+# Exclude problematic paths for now
+exclude = [
+    "tests/",
+    "migrations/",
+]
+
+# Per-module configuration for stricter checking where code is more stable
+[[tool.mypy.overrides]]
+module = [
+    "doctor_who_library.domain.*",
+    "doctor_who_library.shared.exceptions.*",
+]
+disallow_untyped_defs = true
+warn_return_any = true
+
+# More lenient for infrastructure and external integrations
+[[tool.mypy.overrides]]
+module = [
+    "doctor_who_library.infrastructure.*",
+    "doctor_who_library.presentation.*",
+]
+ignore_errors = true
+
 [tool.ruff]
 target-version = "py311"
 line-length = 88

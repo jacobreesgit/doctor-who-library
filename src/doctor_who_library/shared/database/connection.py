@@ -1,8 +1,9 @@
 """Database connection utilities for direct SQLite access."""
 
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator
+
 from doctor_who_library.shared.config.settings import get_settings
 
 
@@ -12,7 +13,7 @@ def get_sqlite_connection() -> Generator[sqlite3.Connection, None, None]:
     settings = get_settings()
     # Extract just the filename from the database URL
     db_path = settings.database.url.split("///")[-1]
-    
+
     conn = sqlite3.connect(db_path)
     try:
         conn.row_factory = sqlite3.Row  # Enable column access by name

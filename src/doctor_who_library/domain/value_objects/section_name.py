@@ -6,12 +6,11 @@ All section names must match the approved list exactly.
 """
 
 from enum import Enum
-from typing import List, Set
 
 
 class SectionName(Enum):
     """Enumeration of all approved section names."""
-    
+
     # Classic Era Doctors
     FIRST_DOCTOR = "1st Doctor"
     SECOND_DOCTOR = "2nd Doctor"
@@ -21,7 +20,7 @@ class SectionName(Enum):
     SIXTH_DOCTOR = "6th Doctor"
     SEVENTH_DOCTOR = "7th Doctor"
     EIGHTH_DOCTOR = "8th Doctor"
-    
+
     # Modern Era Doctors
     NINTH_DOCTOR = "9th Doctor"
     TENTH_DOCTOR = "10th Doctor"
@@ -30,27 +29,27 @@ class SectionName(Enum):
     THIRTEENTH_DOCTOR = "13th Doctor"
     FOURTEENTH_DOCTOR = "14th Doctor"
     FIFTEENTH_DOCTOR = "15th Doctor"
-    
+
     # Special Doctors
     WAR_DOCTOR = "War Doctor"
     FUGITIVE_DOCTOR = "Fugitive Doctor"
     CURATOR = "Curator"
     UNBOUND_DOCTOR = "Unbound Doctor"
-    
+
     # Spin-offs & Companions
     TORCHWOOD = "Torchwood and Captain Jack"
     SARAH_JANE_SMITH = "Sarah Jane Smith"
     CLASS = "Class"
     K9 = "K-9"
     UNIT = "UNIT"
-    
+
     # Villains & Monsters
     DALEK_EMPIRE = "Dalek Empire & I, Davros"
     CYBERMEN = "Cybermen"
     THE_MASTER = "The Master"
     WAR_MASTER = "War Master"
     MISSY = "Missy"
-    
+
     # Special Collections
     TIME_LORD_VICTORIOUS = "Time Lord Victorious Chronology"
     TALES_FROM_NEW_EARTH = "Tales from New Earth"
@@ -59,7 +58,7 @@ class SectionName(Enum):
 
 class SectionCategory(Enum):
     """Section categories for organizational grouping."""
-    
+
     CLASSIC_ERA_DOCTORS = "Classic Era Doctors"
     MODERN_ERA_DOCTORS = "Modern Era Doctors"
     SPECIAL_DOCTORS = "Special Doctors"
@@ -117,12 +116,12 @@ SECTION_CATEGORIES = {
 }
 
 
-def get_all_section_names() -> List[str]:
+def get_all_section_names() -> list[str]:
     """Get all approved section names as strings."""
     return [section.value for section in SectionName]
 
 
-def get_section_names_by_category(category: SectionCategory) -> List[str]:
+def get_section_names_by_category(category: SectionCategory) -> list[str]:
     """Get section names for a specific category."""
     return [section.value for section in SECTION_CATEGORIES[category]]
 
@@ -143,7 +142,7 @@ def get_section_category(section_name: str) -> SectionCategory | None:
 def validate_section_name(section_name: str) -> str:
     """
     Validate and return a section name.
-    
+
     Raises:
         ValueError: If the section name is not in the approved list.
     """
@@ -157,4 +156,4 @@ def validate_section_name(section_name: str) -> str:
 
 
 # For backward compatibility with string-based validation
-APPROVED_SECTION_NAMES: Set[str] = set(get_all_section_names())
+APPROVED_SECTION_NAMES: set[str] = set(get_all_section_names())

@@ -1,24 +1,24 @@
 """Infrastructure-specific exceptions."""
 
-from typing import Optional, Any, Dict
 
 from .base import DoctorWhoLibraryException
 
 
 class InfrastructureException(DoctorWhoLibraryException):
     """Base exception for infrastructure-related errors."""
+
     pass
 
 
 class DatabaseException(InfrastructureException):
     """Exception raised for database-related errors."""
-    
+
     def __init__(
         self,
         message: str,
-        operation: Optional[str] = None,
-        table: Optional[str] = None,
-        cause: Optional[Exception] = None,
+        operation: str | None = None,
+        table: str | None = None,
+        cause: Exception | None = None,
     ):
         super().__init__(
             message=message,
@@ -33,15 +33,15 @@ class DatabaseException(InfrastructureException):
 
 class ExternalServiceException(InfrastructureException):
     """Exception raised for external service errors."""
-    
+
     def __init__(
         self,
         service_name: str,
         operation: str,
         message: str,
-        status_code: Optional[int] = None,
-        response_body: Optional[str] = None,
-        cause: Optional[Exception] = None,
+        status_code: int | None = None,
+        response_body: str | None = None,
+        cause: Exception | None = None,
     ):
         super().__init__(
             message=f"{service_name} service error during {operation}: {message}",

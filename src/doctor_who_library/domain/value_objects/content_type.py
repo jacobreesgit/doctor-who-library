@@ -5,7 +5,7 @@ from enum import Enum
 
 class ContentType(str, Enum):
     """Enumeration of Doctor Who content types."""
-    
+
     # Television
     BBC_TELEVISION = "BBC Television"
     BBC_TELEVISION_CLASS = "BBC Television (Class)"
@@ -13,7 +13,7 @@ class ContentType(str, Enum):
     BBC_TELEVISION_STARZ = "BBC Television / Starz"
     DISNEY_TELEVISION = "Disney Television"
     TV = "TV"
-    
+
     # Audio Stories
     BBC_AUDIO = "BBC Audio"
     BBC_AUDIO_DOOMS_DAY = "BBC Audio (Doom's Day)"
@@ -35,37 +35,37 @@ class ContentType(str, Enum):
     BIG_FINISH_ROBOTS = "Big Finish Productions (The Robots)"
     BIG_FINISH_WAR_DOCTOR = "Big Finish Productions (The War Doctor)"
     BIG_FINISH_WAR_MASTER = "Big Finish Productions (The War Master)"
-    
+
     # Comics
     DWM_COMIC = "Doctor Who Magazine Comic"
     DWM_COMIC_STRIP = "Doctor Who Magazine Comic Strip"
     TITAN_COMICS = "Titan Comics"
     BBC_COMIC_CREATOR = "BBC Comic Creator"
-    
+
     # Books
     BBC_BOOKS = "BBC Books"
     MISSING_ADVENTURES = "The Missing Adventures"
-    
+
     # Minisodes
     BBC_MINISODE = "BBC Minisode"
     BBC_MINISODE_IDENTS = "BBC Minisode (Idents)"
     BBC_MINISODE_TRAILER = "BBC Minisode (Trailer)"
     BBC_TV_MINISODE = "BBC Television Minisode"
-    
+
     # Webcasts
     BBCI_WEBCAST = "BBCi Webcast"
     BIG_FINISH_WEBCAST = "Big Finish Webcast"
     BBC_ONLINE = "BBC Online"
-    
+
     # Video Games
     BBC_ADVENTURE_GAMES = "BBC Adventure Games"
-    
+
     # Documentaries
     DOCUMENTARY = "Documentary"
-    
+
     def __str__(self) -> str:
         return self.value
-    
+
     def get_wiki_suffix(self) -> str:
         """Get the appropriate wiki suffix for searches."""
         audio_types = {
@@ -90,7 +90,7 @@ class ContentType(str, Enum):
             self.BIG_FINISH_WAR_DOCTOR,
             self.BIG_FINISH_WAR_MASTER,
         }
-        
+
         tv_types = {
             self.BBC_TELEVISION,
             self.BBC_TELEVISION_CLASS,
@@ -103,25 +103,25 @@ class ContentType(str, Enum):
             self.BBC_MINISODE_TRAILER,
             self.BBC_TV_MINISODE,
         }
-        
+
         comic_types = {
             self.DWM_COMIC,
             self.DWM_COMIC_STRIP,
             self.TITAN_COMICS,
             self.BBC_COMIC_CREATOR,
         }
-        
+
         book_types = {
             self.BBC_BOOKS,
             self.MISSING_ADVENTURES,
         }
-        
+
         webcast_types = {
             self.BBCI_WEBCAST,
             self.BIG_FINISH_WEBCAST,
             self.BBC_ONLINE,
         }
-        
+
         if self in audio_types:
             return "audio story"
         elif self in tv_types:
