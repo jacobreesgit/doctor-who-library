@@ -119,13 +119,52 @@ export const libraryApi = {
   },
 };
 
+// Admin API
+export const adminApi = {
+  /**
+   * Get admin dashboard statistics
+   */
+  async getDashboardStats(): Promise<{
+    library: LibraryStatsResponse;
+    users: { total: number; active: number; admin: number };
+    system: { status: string; uptime: string };
+  }> {
+    const [libraryStats, healthCheck] = await Promise.all([
+      libraryApi.getLibraryStats(),
+      healthApi.checkHealth()
+    ]);
+
+    return {
+      library: libraryStats,
+      users: {
+        total: 1, // We'll update this when we have user management
+        active: 1,
+        admin: 1
+      },
+      system: {
+        status: healthCheck.status,
+        uptime: 'Unknown'
+      }
+    };
+  },
+
+  /**
+   * Trigger enrichment process
+   */
+  async triggerEnrichment(): Promise<{ message: string; started: boolean }> {
+    const response = await api.post<{ message: string; started: boolean }>('/enrichment/start');
+    return response.data;
+  }
+};
+
 // Health check API
 export const healthApi = {
   /**
    * Check API health
    */
-  async checkHealth(): Promise<{ status: string; message: string }> {
-    const response = await api.get<{ status: string; message: string }>('/health');
+  async checkHealth(): Promise<{ status: string; service?: string }> {
+    // Health endpoint is not under /api prefix - use localhost:8000 when backend is running
+    const response = await axios.get<{ status: string; service?: string }>('http://localhost:8000/health');
     return response.data;
   },
 };
@@ -150,6 +189,10 @@ export const queryKeys = {
   },
   health: {
     check: () => ['health', 'check'],
+  },
+  admin: {
+    dashboardStats: () => ['admin', 'dashboardStats'],
+    enrichment: () => ['admin', 'enrichment'],
   },
 } as const;
 

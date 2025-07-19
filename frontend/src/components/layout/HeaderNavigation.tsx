@@ -54,7 +54,7 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   const navigate = useNavigate();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signInWithGoogle, signOut, loading } = useAuth();
+  const { user, signInWithGoogle, signOut, loading, isAdmin } = useAuth();
   const searchRef = useRef<HTMLInputElement>(null);
   
   // Search functionality
@@ -368,6 +368,15 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
                           >
                             Watch History
                           </Link>
+                          {isAdmin && (
+                            <Link
+                              to="/admin"
+                              className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-50 hover:text-blue-700 font-medium"
+                              onClick={() => setActiveDropdown(null)}
+                            >
+                              Admin Dashboard
+                            </Link>
+                          )}
                           <button
                             onClick={() => {
                               signOut();
@@ -587,6 +596,15 @@ const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
                   >
                     Watch History
                   </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="block w-full text-left py-3 px-4 text-sm font-medium text-blue-200 hover:text-white hover:bg-blue-500 rounded-md transition-colors"
+                      onClick={closeMobileMenu}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       signOut();

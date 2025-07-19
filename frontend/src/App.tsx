@@ -32,6 +32,7 @@ const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const WatchHistoryPage = lazy(() => import('./pages/WatchHistoryPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // Lazy load dev tools only in development
 const ReactQueryDevtools = lazy(() => import('@tanstack/react-query-devtools').then(module => ({ default: module.ReactQueryDevtools })));
@@ -69,6 +70,7 @@ function App() {
                     <Route path="/auth/callback" element={<AuthCallbackPage />} />
                     <Route path="/favorites" element={<FavoritesPage />} />
                     <Route path="/watch-history" element={<WatchHistoryPage />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Suspense>
